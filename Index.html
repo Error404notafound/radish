@@ -14,6 +14,10 @@
         .card-jogo { background: #1e1e1e; padding: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         iframe { width: 100%; height: 250px; border: none; border-radius: 4px; background: #000; }
     </style>
+
+    <!-- Scripts de compatibilidade universal do Firebase (Carrega em qualquer celular) -->
+    <script src="https://gstatic.com"></script>
+    <script src="https://gstatic.com"></script>
 </head>
 <body>
     <div class="container">
@@ -32,70 +36,64 @@
             <label>Seu Nome/Nick:</label>
             <input type="text" id="gameAutor" placeholder="Ex: Error404">
             
-            <button id="btnEnviar">Publicar Game</button>
+            <button onclick="enviarJogo()">Publicar Game</button>
         </div>
 
         <h2>Jogos Disponíveis</h2>
         <div class="grid-jogos" id="listaJogos">Carregando games do Firebase...</div>
     </div>
 
-    <!-- Script do tipo module para permitir o uso de 'import' do SDK oficial do Firebase -->
-    <script type="module">
-        // Importando as funções oficiais direto da CDN do Firebase (Versão Modular v10)
-        import { initializeApp } from "https://gstatic.com";
-        import { getFirestore, collection, addDoc, getDocs } from "https://gstatic.com";
-
-        // A SUA CONFIGURAÇÃO OFICIAL DA API
+    <script>
+        // Suas credenciais oficiais inseridas na estrutura estável
         const firebaseConfig = {
           apiKey: "AIzaSyDDVplbkVC4YepZDJOzFG9bqgzz1tBAOq8",
-          authDomain: "radish-1c9ed.firebaseapp.com",
+          authDomain: "://firebaseapp.com",
           projectId: "radish-1c9ed",
           storageBucket: "radish-1c9ed.firebasestorage.app",
           messagingSenderId: "183804088219",
           appId: "1:183804088219:web:36b67db3f3d85b63dc5b3e"
         };
 
-        // Inicializando o Firebase e o Banco de Dados Firestore Lite
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        // Inicialização padrão do SDK Compatível
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-        // Referência para a coleção chamada 'jogos'
-        const jogosCollection = collection(db, "jogos");
-
-        // 1. FUNÇÃO OFICIAL DO SDK PARA BUSCAR OS JOGOS SALVOS
-        async function carregarJogos() {
+        // 1. CARREGAR OS JOGOS DA SUA COLEÇÃO
+        function carregarJogos() {
             const listaDiv = document.getElementById('listaJogos');
-            try {
-                const querySnapshot = await getDocs(jogosCollection);
-                listaDiv.innerHTML = '';
+            
+            db.collection("jogos").get()
+                .then((querySnapshot) => {
+                    listaDiv.innerHTML = '';
 
-                if (querySnapshot.empty) {
-                    listaDiv.innerHTML = '<p>Nenhum jogo publicado ainda. Seja o primeiro!</p>';
-                    return;
-                }
+                    if (querySnapshot.empty) {
+                        listaDiv.innerHTML = '<p>Nenhum jogo publicado ainda. Seja o primeiro!</p>';
+                        return;
+                    }
 
-                querySnapshot.forEach((doc) => {
-                    const dados = doc.data();
-                    const titulo = dados.titulo;
-                    const embedUrl = dados.embedUrl;
-                    const autor = dados.autor || 'Anônimo';
+                    querySnapshot.forEach((doc) => {
+                        const dados = doc.data();
+                        const titulo = dados.titulo;
+                        const embedUrl = dados.embedUrl;
+                        const autor = dados.autor || 'Anônimo';
 
-                    listaDiv.innerHTML += `
-                        <div class="card-jogo">
-                            <h3>${titulo}</h3>
-                            <iframe src="${embedUrl}" allowfullscreen></iframe>
-                            <p><small>Enviado por: ${autor}</small></p>
-                        </div>
-                    `;
+                        listaDiv.innerHTML += `
+                            <div class="card-jogo">
+                                <h3>${titulo}</h3>
+                                <iframe src="${embedUrl}" allowfullscreen></iframe>
+                                <p><small>Enviado por: ${autor}</small></p>
+                            </div>
+                        `;
+                    });
+                })
+                .catch((error) => {
+                    listaDiv.innerText = "Erro ao conectar com o Firestore.";
+                    console.error("Erro:", error);
                 });
-            } catch (error) {
-                listaDiv.innerText = "Erro ao carregar os jogos do Firestore.";
-                console.error("Erro no Firebase:", error);
-            }
         }
 
-        // 2. FUNÇÃO OFICIAL DO SDK PARA ADICIONAR UM NOVO JOGO
-        async function enviarJogo() {
+        // 2. SALVAR UM NOVO JOGO NO FIRESTORE
+        function enviarJogo() {
             const titulo = document.getElementById('gameTitulo').value;
             const embedUrl = document.getElementById('gameUrl').value;
             const autor = document.getElementById('gameAutor').value;
@@ -105,32 +103,26 @@
                 return;
             }
 
-            try {
-                // Adicionando o documento direto na coleção usando as funções do SDK
-                await addDoc(jogosCollection, {
-                    titulo: titulo,
-                    embedUrl: embedUrl,
-                    autor: autor || "Anônimo",
-                    dataCriacao: new Date()
-                });
-
+            db.collection("jogos").add({
+                titulo: titulo,
+                embedUrl: embedUrl,
+                autor: autor || "Anônimo",
+                dataCriacao: new Date()
+            })
+            .then(() => {
                 alert("Jogo publicado com sucesso!");
-                
-                // Limpa o formulário e atualiza a tela
                 document.getElementById('gameTitulo').value = '';
                 document.getElementById('gameUrl').value = '';
                 document.getElementById('gameAutor').value = '';
-                carregarJogos();
-            } catch (error) {
-                alert("Erro ao publicar jogo. Verifique suas regras do banco.");
-                console.error("Erro ao salvar:", error);
-            }
+                carregarJogos(); // Recarrega a lista na tela
+            })
+            .catch((error) => {
+                alert("Erro ao salvar. Verifique se suas regras estão abertas no Firebase.");
+                console.error("Erro:", error);
+            });
         }
 
-        // Vincula a função ao clique do botão
-        document.getElementById('btnEnviar').addEventListener('click', enviarJogo);
-
-        // Executa a busca assim que o site carrega
+        // Inicia puxando os registros salvos
         carregarJogos();
     </script>
 </body>
