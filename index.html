@@ -2,320 +2,390 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radish Games 🌿</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Radish - Jogos Online</title>
+    <!-- Ícones Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --bg-color: #0b0b0e;
-            --card-bg: #141419;
-            --accent: #ff4732;
-            --text-main: #ffffff;
-            --text-muted: #8e8e9f;
-            --border-radius: 12px;
+            --bg-body: #060709;
+            --bg-surface: #0f1115;
+            --bg-card: #15181e;
+            --primary: #ff4732;
+            --primary-glow: rgba(255, 71, 50, 0.35);
+            --text: #ffffff;
+            --text-secondary: #7e8594;
+            --border: rgba(255, 255, 255, 0.07);
+            --radius-md: 10px;
+            --radius-lg: 16px;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Inter', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            background-color: var(--bg-body);
+            color: var(--text);
+            padding-bottom: 85px;
             overflow-x: hidden;
-            padding-bottom: 90px;
         }
 
-        /* Top Header */
+        /* HEADER */
         header {
+            position: sticky;
+            top: 0;
+            z-index: 90;
+            background: rgba(6, 7, 9, 0.85);
+            backdrop-filter: blur(14px);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 16px 20px;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            background: rgba(11, 11, 14, 0.95);
-            backdrop-filter: blur(10px);
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .header-icon {
-            font-size: 22px;
-            cursor: pointer;
-            color: #fff;
+        .icon-btn {
             background: none;
             border: none;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .brand {
+        .brand-logo {
             text-align: center;
+            text-decoration: none;
         }
 
-        .brand h1 {
-            font-size: 22px;
+        .brand-logo h1 {
+            font-size: 20px;
             font-weight: 900;
-            letter-spacing: 1px;
+            letter-spacing: -0.5px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 2px;
+            color: #fff;
         }
 
-        .brand h1 span {
-            color: var(--accent);
+        .brand-logo h1 span {
+            color: var(--primary);
         }
 
-        .brand small {
+        .brand-logo small {
             display: block;
-            font-size: 9px;
-            letter-spacing: 4px;
-            color: var(--text-muted);
-            margin-top: -3px;
+            font-size: 8px;
+            letter-spacing: 5px;
+            color: var(--text-secondary);
+            margin-top: -2px;
+            font-weight: 600;
         }
 
-        /* Banner Destaque */
+        /* BARRA DE PESQUISA EXPANSÍVEL */
+        .search-drawer {
+            position: fixed;
+            top: 55px;
+            left: 0;
+            right: 0;
+            background: var(--bg-surface);
+            padding: 10px 16px;
+            display: none;
+            border-bottom: 1px solid var(--border);
+            z-index: 89;
+        }
+
+        .search-drawer.active {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-drawer input {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 10px 14px;
+            border-radius: var(--radius-md);
+            color: #fff;
+            outline: none;
+            font-size: 14px;
+        }
+
+        /* HERO CAROUSEL */
         .hero {
             position: relative;
-            margin: 0 16px 25px 16px;
-            height: 200px;
-            border-radius: var(--border-radius);
-            background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(11,11,14,0.95) 100%), 
-                        url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1000&auto=format&fit=crop') center/cover;
+            margin: 14px 16px;
+            height: 220px;
+            border-radius: var(--radius-lg);
+            background: linear-gradient(180deg, rgba(6,7,9,0) 0%, rgba(6,7,9,0.95) 100%),
+                        url('https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1000&auto=format&fit=crop') center/cover;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            padding: 16px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05);
+            padding: 18px;
+            border: 1px solid var(--border);
         }
 
         .hero-tags {
             display: flex;
             gap: 8px;
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 4px;
         }
 
-        .hero-tags span:first-child { color: #f59e0b; }
-        .hero-tags span:last-child { color: var(--text-muted); }
+        .hero-tags .tag-cat { color: #f59e0b; }
+        .hero-tags .tag-div { color: var(--text-secondary); }
 
         .hero-title {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 800;
             text-transform: uppercase;
+            letter-spacing: -0.5px;
         }
 
         .hero-dots {
             display: flex;
-            gap: 6px;
-            margin-top: 10px;
+            gap: 5px;
+            margin-top: 12px;
         }
 
         .dot {
             width: 6px;
             height: 6px;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.25);
             border-radius: 50%;
         }
 
         .dot.active {
-            background: #fff;
-            width: 14px;
+            background: var(--primary);
+            width: 16px;
             border-radius: 10px;
         }
 
-        /* Seções de Conteúdo */
+        /* CABEÇALHOS DE SEÇÃO */
         .section-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 16px;
-            margin: 24px 0 14px 0;
+            margin: 26px 0 12px 0;
         }
 
         .section-title {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 700;
         }
 
         .section-title::before {
             content: '';
             width: 4px;
-            height: 18px;
-            background: var(--accent);
+            height: 16px;
+            background: var(--primary);
             border-radius: 4px;
             display: inline-block;
         }
 
         .section-more {
             font-size: 13px;
-            color: var(--text-muted);
+            color: var(--text-secondary);
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
         }
 
-        /* Lista Horizontal de Cards */
-        .horizontal-scroll {
+        /* SCROLL HORIZONTAL */
+        .horizontal-list {
             display: flex;
-            gap: 14px;
+            gap: 12px;
             overflow-x: auto;
             padding: 0 16px;
             scroll-behavior: smooth;
         }
 
-        .horizontal-scroll::-webkit-scrollbar {
+        .horizontal-list::-webkit-scrollbar {
             display: none;
         }
 
-        /* Card de Jogo */
+        /* CARDS PADRÃO */
         .game-card {
-            flex: 0 0 160px;
+            flex: 0 0 140px;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform 0.15s ease;
         }
 
         .game-card:active {
-            transform: scale(0.97);
+            transform: scale(0.96);
         }
 
-        .card-thumb {
-            width: 100%;
-            height: 105px;
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
+        .poster-wrapper {
             position: relative;
+            width: 100%;
+            height: 195px;
+            border-radius: var(--radius-md);
             overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(255,255,255,0.05);
-            background-size: cover;
-            background-position: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
         }
 
-        .badge-left {
+        .poster-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .badge-status {
             position: absolute;
-            top: 8px;
-            left: 8px;
+            top: 7px;
+            left: 7px;
             background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(4px);
             font-size: 10px;
             font-weight: 700;
-            padding: 3px 6px;
+            padding: 2px 6px;
             border-radius: 4px;
         }
 
-        .badge-right {
+        .badge-type {
             position: absolute;
-            top: 8px;
-            right: 8px;
-            background: var(--accent);
+            bottom: 7px;
+            right: 7px;
+            background: var(--primary);
             font-size: 9px;
             font-weight: 800;
-            padding: 3px 6px;
+            padding: 2px 6px;
             border-radius: 4px;
-            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
-        .card-info {
-            margin-top: 8px;
+        .game-info {
+            margin-top: 7px;
         }
 
-        .card-name {
+        .game-title {
             font-size: 13px;
-            font-weight: 700;
+            font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .card-sub {
+        .game-meta {
             font-size: 11px;
-            color: var(--text-muted);
+            color: var(--text-secondary);
             margin-top: 2px;
         }
 
-        /* Modal do Jogo / Player */
-        .game-modal {
+        /* CARDS DO TOP 5 (COM NÚMERO GIGANTE NO FUNDO) */
+        .top-card {
+            position: relative;
+            flex: 0 0 160px;
+            padding-left: 20px;
+        }
+
+        .top-number {
+            position: absolute;
+            left: -5px;
+            bottom: 15px;
+            font-size: 95px;
+            font-weight: 900;
+            color: transparent;
+            -webkit-text-stroke: 3px rgba(255, 255, 255, 0.2);
+            z-index: 1;
+            line-height: 1;
+            user-select: none;
+        }
+
+        .top-card .poster-wrapper {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* REPRODUTOR / MODAL DE JOGO */
+        .player-modal {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 100;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.94);
+            z-index: 1000;
             display: none;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 16px;
         }
 
-        .game-modal.active { display: flex; }
-
-        .modal-box {
-            width: 100%;
-            max-width: 800px;
-            background: #141419;
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .modal-header {
+        .player-modal.active {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 16px;
-            background: #1c1c22;
         }
 
-        .modal-close {
+        .player-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .player-frame-container {
+            flex: 1;
+            width: 100%;
+            background: #000;
+        }
+
+        .player-frame-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* BOTTOM NAVIGATION BAR */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: rgba(15, 17, 21, 0.95);
+            backdrop-filter: blur(14px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid var(--border);
+            z-index: 80;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            color: var(--text-secondary);
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
             background: none;
             border: none;
-            color: #fff;
-            font-size: 20px;
-            cursor: pointer;
         }
 
-        .modal-box iframe {
-            width: 100%;
-            height: 380px;
-            border: none;
+        .nav-item.active {
+            color: var(--primary);
         }
 
-        /* Botão Flutuante Publicar */
-        .fab-publish {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(255, 71, 50, 0.4);
-            z-index: 40;
-        }
-
-        /* Modal de Cadastro */
+        /* MODAL DE ENVIO DE JOGOS */
         .form-modal {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            inset: 0;
             background: rgba(0, 0, 0, 0.8);
-            z-index: 99;
+            z-index: 999;
             display: none;
             align-items: center;
             justify-content: center;
@@ -324,63 +394,77 @@
 
         .form-modal.active { display: flex; }
 
-        .form-content {
-            background: #16161c;
+        .form-container {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
             width: 100%;
-            max-width: 400px;
-            padding: 24px;
-            border-radius: 16px;
-            border: 1px solid rgba(255,255,255,0.08);
+            max-width: 380px;
+            padding: 22px;
         }
 
-        .form-content h3 { margin-bottom: 16px; }
+        .form-container h3 {
+            font-size: 17px;
+            margin-bottom: 14px;
+        }
 
-        .form-content input {
+        .form-container input {
             width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
             padding: 12px;
-            margin-bottom: 12px;
-            border-radius: 8px;
-            background: #23232c;
-            border: 1px solid #333342;
+            border-radius: var(--radius-md);
             color: #fff;
+            margin-bottom: 12px;
             outline: none;
+            font-size: 13px;
         }
 
-        .form-content button {
+        .form-container button.submit {
             width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            background: var(--accent);
-            color: white;
+            padding: 13px;
+            background: var(--primary);
+            color: #fff;
             border: none;
+            border-radius: var(--radius-md);
             font-weight: 700;
             cursor: pointer;
         }
     </style>
 
-    <!-- Firebase Scripts Compatíveis -->
+    <!-- SDKs Firebase Universais -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
 <body>
 
-    <!-- Header Principal -->
+    <!-- Header -->
     <header>
-        <button class="header-icon">☰</button>
-        <div class="brand">
+        <button class="icon-btn" onclick="alert('Menu lateral em desenvolvimento!')">
+            <i data-lucide="menu"></i>
+        </button>
+        <a href="#" class="brand-logo">
             <h1>RADISH <span>GAMES</span></h1>
             <small>ラディッシュ ゲーム</small>
-        </div>
-        <button class="header-icon">🔍</button>
+        </a>
+        <button class="icon-btn" onclick="toggleSearch()">
+            <i data-lucide="search"></i>
+        </button>
     </header>
 
-    <!-- Banner Destaque -->
+    <!-- Barra de Pesquisa Expansível -->
+    <div class="search-drawer" id="searchDrawer">
+        <input type="text" id="searchInput" placeholder="Pesquisar jogos..." onkeyup="filtrarJogos()">
+    </div>
+
+    <!-- Banner Principal -->
     <div class="hero">
         <div class="hero-tags">
-            <span>Destaque</span>
-            <span>Comunidade</span>
+            <span class="tag-cat">Destaque</span>
+            <span class="tag-div">•</span>
+            <span>Web Games</span>
         </div>
-        <h2 class="hero-title">Jogue Jogos da Galera</h2>
+        <h2 class="hero-title">Mushoku Tensei Game</h2>
         <div class="hero-dots">
             <div class="dot active"></div>
             <div class="dot"></div>
@@ -388,124 +472,181 @@
         </div>
     </div>
 
-    <!-- Seção 1: Novos Jogos -->
+    <!-- Seção: Novos Jogos -->
     <div class="section-header">
         <h3 class="section-title">Novos jogos</h3>
         <a href="#" class="section-more">Tudo</a>
     </div>
-    <div class="horizontal-scroll" id="listaNovos">Carregando jogos...</div>
-
-    <!-- Seção 2: Populares / Em Alta -->
-    <div class="section-header">
-        <h3 class="section-title">Em Alta - Top Jogos</h3>
-        <a href="#" class="section-more">Explorar</a>
+    <div class="horizontal-list" id="listaNovos">
+        <div style="padding: 10px; color: var(--text-secondary); font-size: 12px;">Carregando catálogo...</div>
     </div>
-    <div class="horizontal-scroll" id="listaEmAlta">Carregando jogos...</div>
 
-    <!-- Botão Flutuante para Adicionar Jogo -->
-    <button class="fab-publish" onclick="toggleModal('modalEnvio')">+ Publicar</button>
+    <!-- Seção: Em Alta (Top 5 estilo Sushi) -->
+    <div class="section-header">
+        <h3 class="section-title">Em Alta - Top 5</h3>
+        <a href="#" class="section-more">Tudo</a>
+    </div>
+    <div class="horizontal-list" id="listaTop5">
+        <!-- Injetado dinamicamente com numeração gigante -->
+    </div>
 
-    <!-- Modal para Jogar (Embed Player) -->
-    <div class="game-modal" id="modalPlayer">
-        <div class="modal-box">
-            <div class="modal-header">
-                <span id="playerTitulo" style="font-weight:700;">Jogando...</span>
-                <button class="modal-close" onclick="fecharPlayer()">✕</button>
-            </div>
-            <iframe id="iframePlayer" src="" allowfullscreen></iframe>
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+        <button class="nav-item active">
+            <i data-lucide="home"></i>
+            <span>Início</span>
+        </button>
+        <button class="nav-item" onclick="toggleModal('modalEnvio')">
+            <i data-lucide="plus-circle"></i>
+            <span>Publicar</span>
+        </button>
+        <button class="nav-item" onclick="alert('Histórico em breve')">
+            <i data-lucide="clock"></i>
+            <span>Histórico</span>
+        </button>
+        <button class="nav-item" onclick="alert('Área de membros em breve')">
+            <i data-lucide="user"></i>
+            <span>Perfil</span>
+        </button>
+    </nav>
+
+    <!-- Modal Player (Iframe Fullscreen) -->
+    <div class="player-modal" id="modalPlayer">
+        <div class="player-bar">
+            <span id="playerTitulo" style="font-weight:700; font-size:14px;">Carregando Game...</span>
+            <button class="icon-btn" onclick="fecharPlayer()">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <div class="player-frame-container">
+            <iframe id="gameIframe" src="" allow="fullscreen; autoplay"></iframe>
         </div>
     </div>
 
-    <!-- Modal Formulário de Envio -->
+    <!-- Modal de Envio -->
     <div class="form-modal" id="modalEnvio">
-        <div class="form-content">
-            <h3>Publicar Novo Game</h3>
+        <div class="form-container">
+            <h3>Publicar no Radish</h3>
             <input type="text" id="gameTitulo" placeholder="Nome do Jogo">
-            <input type="url" id="gameUrl" placeholder="URL do Embed (Iframe)">
+            <input type="url" id="gameUrl" placeholder="Link de Embed (URL do iframe)">
+            <input type="url" id="gameCover" placeholder="URL da Foto de Capa (Opcional)">
             <input type="text" id="gameAutor" placeholder="Seu Nick">
-            <button onclick="enviarJogo()">Salvar Jogo</button>
-            <button onclick="toggleModal('modalEnvio')" style="background:transparent; margin-top:8px; color:var(--text-muted)">Cancelar</button>
+            <button class="submit" onclick="enviarJogo()">Publicar Game</button>
+            <button onclick="toggleModal('modalEnvio')" style="width:100%; background:none; border:none; color:var(--text-secondary); margin-top:10px; cursor:pointer;">Fechar</button>
         </div>
     </div>
 
     <script>
-        // Credenciais Firebase
+        // Inicialização de Ícones
+        lucide.createIcons();
+
+        // Firebase Configuração Oficial
         const firebaseConfig = {
-          apiKey: "AIzaSyDDVplbkVC4YepZDJOzFG9bqgzz1tBAOq8",
-          authDomain: "radish-1c9ed.firebaseapp.com",
-          projectId: "radish-1c9ed",
-          storageBucket: "radish-1c9ed.firebasestorage.app",
-          messagingSenderId: "183804088219",
-          appId: "1:183804088219:web:36b67db3f3d85b63dc5b3e"
+            apiKey: "AIzaSyDDVplbkVC4YepZDJOzFG9bqgzz1tBAOq8",
+            authDomain: "radish-1c9ed.firebaseapp.com",
+            projectId: "radish-1c9ed",
+            storageBucket: "radish-1c9ed.firebasestorage.app",
+            messagingSenderId: "183804088219",
+            appId: "1:183804088219:web:36b67db3f3d85b63dc5b3e"
         };
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        let cacheJogos = [];
 
-        // Alternar Modal de Envio
-        function toggleModal(id) {
-            const modal = document.getElementById(id);
-            modal.classList.toggle('active');
+        function toggleSearch() {
+            const drawer = document.getElementById('searchDrawer');
+            drawer.classList.toggle('active');
+            if (drawer.classList.contains('active')) {
+                document.getElementById('searchInput').focus();
+            }
         }
 
-        // Executar Jogo em Tela Cheia/Player Modal
+        function toggleModal(id) {
+            document.getElementById(id).classList.toggle('active');
+        }
+
         function abrirPlayer(url, titulo) {
-            document.getElementById('iframePlayer').src = url;
             document.getElementById('playerTitulo').innerText = titulo;
+            document.getElementById('gameIframe').src = url;
             document.getElementById('modalPlayer').classList.add('active');
         }
 
         function fecharPlayer() {
-            document.getElementById('iframePlayer').src = '';
+            document.getElementById('gameIframe').src = '';
             document.getElementById('modalPlayer').classList.remove('active');
         }
 
-        // Carregar do Firestore
+        // Carregamento Firestore com Tratamento Visual Sushi
         function carregarJogos() {
-            const listaNovos = document.getElementById('listaNovos');
-            const listaEmAlta = document.getElementById('listaEmAlta');
-
-            db.collection("jogos").get()
-                .then((snapshot) => {
-                    listaNovos.innerHTML = '';
-                    listaEmAlta.innerHTML = '';
-
-                    if (snapshot.empty) {
-                        listaNovos.innerHTML = '<p style="color:#666; font-size:13px;">Nenhum jogo postado.</p>';
-                        return;
-                    }
-
-                    snapshot.forEach((doc) => {
-                        const jogo = doc.data();
-                        
-                        // Gerador de Card idêntico ao Sushi Animes
-                        const cardHTML = `
-                            <div class="game-card" onclick="abrirPlayer('${jogo.embedUrl}', '${jogo.titulo}')">
-                                <div class="card-thumb" style="background-image: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.85) 100%), url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400&auto=format&fit=crop');">
-                                    <span class="badge-left">Hoje</span>
-                                    <span class="badge-right">PLAY</span>
-                                </div>
-                                <div class="card-info">
-                                    <div class="card-name">${jogo.titulo}</div>
-                                    <div class="card-sub">Por ${jogo.autor || 'Anônimo'}</div>
-                                </div>
-                            </div>
-                        `;
-
-                        listaNovos.innerHTML += cardHTML;
-                        listaEmAlta.innerHTML += cardHTML;
-                    });
-                })
-                .catch(err => {
-                    console.error(err);
-                    listaNovos.innerText = "Erro ao carregar jogos.";
-                });
+            db.collection("jogos").get().then((snapshot) => {
+                cacheJogos = [];
+                snapshot.forEach(doc => cacheJogos.push(doc.data()));
+                renderizar(cacheJogos);
+            }).catch(err => {
+                console.error(err);
+                document.getElementById('listaNovos').innerHTML = "Erro ao carregar dados.";
+            });
         }
 
-        // Enviar novo jogo
+        function renderizar(jogos) {
+            const listaNovos = document.getElementById('listaNovos');
+            const listaTop5 = document.getElementById('listaTop5');
+            listaNovos.innerHTML = '';
+            listaTop5.innerHTML = '';
+
+            if (jogos.length === 0) {
+                listaNovos.innerHTML = '<p style="color:var(--text-secondary); font-size:12px;">Nenhum jogo encontrado.</p>';
+                return;
+            }
+
+            jogos.forEach((jogo, index) => {
+                const capa = jogo.cover || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400&auto=format&fit=crop';
+                
+                // Card Horizontal Padrão
+                listaNovos.innerHTML += `
+                    <div class="game-card" onclick="abrirPlayer('${jogo.embedUrl}', '${jogo.titulo}')">
+                        <div class="poster-wrapper">
+                            <img class="poster-img" src="${capa}" loading="lazy" alt="${jogo.titulo}">
+                            <span class="badge-status">Novo</span>
+                            <span class="badge-type">HTML5</span>
+                        </div>
+                        <div class="game-info">
+                            <div class="game-title">${jogo.titulo}</div>
+                            <div class="game-meta">Por ${jogo.autor || 'Anônimo'}</div>
+                        </div>
+                    </div>
+                `;
+
+                // Top 5 com Numeração
+                if (index < 5) {
+                    listaTop5.innerHTML += `
+                        <div class="game-card top-card" onclick="abrirPlayer('${jogo.embedUrl}', '${jogo.titulo}')">
+                            <div class="top-number">${index + 1}</div>
+                            <div class="poster-wrapper">
+                                <img class="poster-img" src="${capa}" loading="lazy" alt="${jogo.titulo}">
+                                <span class="badge-status" style="background:#f59e0b; color:#000;">★ TOP</span>
+                            </div>
+                            <div class="game-info">
+                                <div class="game-title">${jogo.titulo}</div>
+                                <div class="game-meta">Popular</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        }
+
+        function filtrarJogos() {
+            const termo = document.getElementById('searchInput').value.toLowerCase();
+            const filtrados = cacheJogos.filter(j => j.titulo.toLowerCase().includes(termo));
+            renderizar(filtrados);
+        }
+
         function enviarJogo() {
             const titulo = document.getElementById('gameTitulo').value;
             const embedUrl = document.getElementById('gameUrl').value;
+            const cover = document.getElementById('gameCover').value;
             const autor = document.getElementById('gameAutor').value;
 
             if (!titulo || !embedUrl) {
@@ -516,17 +657,17 @@
             db.collection("jogos").add({
                 titulo: titulo,
                 embedUrl: embedUrl,
+                cover: cover || '',
                 autor: autor || "Anônimo",
                 dataCriacao: new Date()
-            })
-            .then(() => {
+            }).then(() => {
                 toggleModal('modalEnvio');
                 document.getElementById('gameTitulo').value = '';
                 document.getElementById('gameUrl').value = '';
+                document.getElementById('gameCover').value = '';
                 document.getElementById('gameAutor').value = '';
                 carregarJogos();
-            })
-            .catch(err => alert("Erro ao salvar: " + err.message));
+            }).catch(e => alert("Erro: " + e.message));
         }
 
         carregarJogos();
