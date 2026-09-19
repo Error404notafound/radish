@@ -4,102 +4,512 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Radish Games 🌿</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: sans-serif; background: #121212; color: #fff; padding: 20px; text-align: center; }
-        .container { max-width: 800px; margin: 0 auto; }
-        .form-envio { background: #1e1e1e; padding: 20px; border-radius: 8px; margin-bottom: 30px; text-align: left; }
-        .form-envio input { width: 100%; padding: 10px; margin: 5px 0 15px 0; border-radius: 4px; border: none; box-sizing: border-box; background: #2d2d2d; color: #fff; }
-        .form-envio button { background: #ff4757; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; }
-        .grid-jogos { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .card-jogo { background: #1e1e1e; padding: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        iframe { width: 100%; height: 250px; border: none; border-radius: 4px; background: #000; }
+        :root {
+            --bg-color: #0b0b0e;
+            --card-bg: #141419;
+            --accent: #ff4732;
+            --text-main: #ffffff;
+            --text-muted: #8e8e9f;
+            --border-radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+            padding-bottom: 90px;
+        }
+
+        /* Top Header */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(11, 11, 14, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .header-icon {
+            font-size: 22px;
+            cursor: pointer;
+            color: #fff;
+            background: none;
+            border: none;
+        }
+
+        .brand {
+            text-align: center;
+        }
+
+        .brand h1 {
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .brand h1 span {
+            color: var(--accent);
+        }
+
+        .brand small {
+            display: block;
+            font-size: 9px;
+            letter-spacing: 4px;
+            color: var(--text-muted);
+            margin-top: -3px;
+        }
+
+        /* Banner Destaque */
+        .hero {
+            position: relative;
+            margin: 0 16px 25px 16px;
+            height: 200px;
+            border-radius: var(--border-radius);
+            background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(11,11,14,0.95) 100%), 
+                        url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1000&auto=format&fit=crop') center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .hero-tags {
+            display: flex;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .hero-tags span:first-child { color: #f59e0b; }
+        .hero-tags span:last-child { color: var(--text-muted); }
+
+        .hero-title {
+            font-size: 20px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .hero-dots {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+        }
+
+        .dot.active {
+            background: #fff;
+            width: 14px;
+            border-radius: 10px;
+        }
+
+        /* Seções de Conteúdo */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            margin: 24px 0 14px 0;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 18px;
+            background: var(--accent);
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .section-more {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Lista Horizontal de Cards */
+        .horizontal-scroll {
+            display: flex;
+            gap: 14px;
+            overflow-x: auto;
+            padding: 0 16px;
+            scroll-behavior: smooth;
+        }
+
+        .horizontal-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Card de Jogo */
+        .game-card {
+            flex: 0 0 160px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .game-card:active {
+            transform: scale(0.97);
+        }
+
+        .card-thumb {
+            width: 100%;
+            height: 105px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,0.05);
+            background-size: cover;
+            background-position: center;
+        }
+
+        .badge-left {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .badge-right {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--accent);
+            font-size: 9px;
+            font-weight: 800;
+            padding: 3px 6px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .card-info {
+            margin-top: 8px;
+        }
+
+        .card-name {
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* Modal do Jogo / Player */
+        .game-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+
+        .game-modal.active { display: flex; }
+
+        .modal-box {
+            width: 100%;
+            max-width: 800px;
+            background: #141419;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: #1c1c22;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .modal-box iframe {
+            width: 100%;
+            height: 380px;
+            border: none;
+        }
+
+        /* Botão Flutuante Publicar */
+        .fab-publish {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 71, 50, 0.4);
+            z-index: 40;
+        }
+
+        /* Modal de Cadastro */
+        .form-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 99;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .form-modal.active { display: flex; }
+
+        .form-content {
+            background: #16161c;
+            width: 100%;
+            max-width: 400px;
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .form-content h3 { margin-bottom: 16px; }
+
+        .form-content input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            background: #23232c;
+            border: 1px solid #333342;
+            color: #fff;
+            outline: none;
+        }
+
+        .form-content button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+        }
     </style>
 
-    <!-- Scripts de compatibilidade universal do Firebase (Carrega em qualquer celular) -->
-    <script src="https://gstatic.com"></script>
-    <script src="https://gstatic.com"></script>
+    <!-- Firebase Scripts Compatíveis -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Radish Games 🌿🕹️</h1>
-        <p>Jogue e publique seus próprios games via Embed!</p>
 
-        <!-- Formulário para envio de novos jogos -->
-        <div class="form-envio">
-            <h3>Publicar seu Game</h3>
-            <label>Nome do Jogo:</label>
-            <input type="text" id="gameTitulo" placeholder="Ex: Meu Jogo Super Legal">
-            
-            <label>URL do Embed (Iframe):</label>
-            <input type="url" id="gameUrl" placeholder="Ex: https://mit.edu">
-            
-            <label>Seu Nome/Nick:</label>
-            <input type="text" id="gameAutor" placeholder="Ex: Error404">
-            
-            <button onclick="enviarJogo()">Publicar Game</button>
+    <!-- Header Principal -->
+    <header>
+        <button class="header-icon">☰</button>
+        <div class="brand">
+            <h1>RADISH <span>GAMES</span></h1>
+            <small>ラディッシュ ゲーム</small>
         </div>
+        <button class="header-icon">🔍</button>
+    </header>
 
-        <h2>Jogos Disponíveis</h2>
-        <div class="grid-jogos" id="listaJogos">Carregando games do Firebase...</div>
+    <!-- Banner Destaque -->
+    <div class="hero">
+        <div class="hero-tags">
+            <span>Destaque</span>
+            <span>Comunidade</span>
+        </div>
+        <h2 class="hero-title">Jogue Jogos da Galera</h2>
+        <div class="hero-dots">
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+
+    <!-- Seção 1: Novos Jogos -->
+    <div class="section-header">
+        <h3 class="section-title">Novos jogos</h3>
+        <a href="#" class="section-more">Tudo</a>
+    </div>
+    <div class="horizontal-scroll" id="listaNovos">Carregando jogos...</div>
+
+    <!-- Seção 2: Populares / Em Alta -->
+    <div class="section-header">
+        <h3 class="section-title">Em Alta - Top Jogos</h3>
+        <a href="#" class="section-more">Explorar</a>
+    </div>
+    <div class="horizontal-scroll" id="listaEmAlta">Carregando jogos...</div>
+
+    <!-- Botão Flutuante para Adicionar Jogo -->
+    <button class="fab-publish" onclick="toggleModal('modalEnvio')">+ Publicar</button>
+
+    <!-- Modal para Jogar (Embed Player) -->
+    <div class="game-modal" id="modalPlayer">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span id="playerTitulo" style="font-weight:700;">Jogando...</span>
+                <button class="modal-close" onclick="fecharPlayer()">✕</button>
+            </div>
+            <iframe id="iframePlayer" src="" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <!-- Modal Formulário de Envio -->
+    <div class="form-modal" id="modalEnvio">
+        <div class="form-content">
+            <h3>Publicar Novo Game</h3>
+            <input type="text" id="gameTitulo" placeholder="Nome do Jogo">
+            <input type="url" id="gameUrl" placeholder="URL do Embed (Iframe)">
+            <input type="text" id="gameAutor" placeholder="Seu Nick">
+            <button onclick="enviarJogo()">Salvar Jogo</button>
+            <button onclick="toggleModal('modalEnvio')" style="background:transparent; margin-top:8px; color:var(--text-muted)">Cancelar</button>
+        </div>
     </div>
 
     <script>
-        // Suas credenciais oficiais inseridas na estrutura estável
+        // Credenciais Firebase
         const firebaseConfig = {
           apiKey: "AIzaSyDDVplbkVC4YepZDJOzFG9bqgzz1tBAOq8",
-          authDomain: "://firebaseapp.com",
+          authDomain: "radish-1c9ed.firebaseapp.com",
           projectId: "radish-1c9ed",
           storageBucket: "radish-1c9ed.firebasestorage.app",
           messagingSenderId: "183804088219",
           appId: "1:183804088219:web:36b67db3f3d85b63dc5b3e"
         };
 
-        // Inicialização padrão do SDK Compatível
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // 1. CARREGAR OS JOGOS DA SUA COLEÇÃO
-        function carregarJogos() {
-            const listaDiv = document.getElementById('listaJogos');
-            
-            db.collection("jogos").get()
-                .then((querySnapshot) => {
-                    listaDiv.innerHTML = '';
+        // Alternar Modal de Envio
+        function toggleModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.toggle('active');
+        }
 
-                    if (querySnapshot.empty) {
-                        listaDiv.innerHTML = '<p>Nenhum jogo publicado ainda. Seja o primeiro!</p>';
+        // Executar Jogo em Tela Cheia/Player Modal
+        function abrirPlayer(url, titulo) {
+            document.getElementById('iframePlayer').src = url;
+            document.getElementById('playerTitulo').innerText = titulo;
+            document.getElementById('modalPlayer').classList.add('active');
+        }
+
+        function fecharPlayer() {
+            document.getElementById('iframePlayer').src = '';
+            document.getElementById('modalPlayer').classList.remove('active');
+        }
+
+        // Carregar do Firestore
+        function carregarJogos() {
+            const listaNovos = document.getElementById('listaNovos');
+            const listaEmAlta = document.getElementById('listaEmAlta');
+
+            db.collection("jogos").get()
+                .then((snapshot) => {
+                    listaNovos.innerHTML = '';
+                    listaEmAlta.innerHTML = '';
+
+                    if (snapshot.empty) {
+                        listaNovos.innerHTML = '<p style="color:#666; font-size:13px;">Nenhum jogo postado.</p>';
                         return;
                     }
 
-                    querySnapshot.forEach((doc) => {
-                        const dados = doc.data();
-                        const titulo = dados.titulo;
-                        const embedUrl = dados.embedUrl;
-                        const autor = dados.autor || 'Anônimo';
-
-                        listaDiv.innerHTML += `
-                            <div class="card-jogo">
-                                <h3>${titulo}</h3>
-                                <iframe src="${embedUrl}" allowfullscreen></iframe>
-                                <p><small>Enviado por: ${autor}</small></p>
+                    snapshot.forEach((doc) => {
+                        const jogo = doc.data();
+                        
+                        // Gerador de Card idêntico ao Sushi Animes
+                        const cardHTML = `
+                            <div class="game-card" onclick="abrirPlayer('${jogo.embedUrl}', '${jogo.titulo}')">
+                                <div class="card-thumb" style="background-image: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.85) 100%), url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400&auto=format&fit=crop');">
+                                    <span class="badge-left">Hoje</span>
+                                    <span class="badge-right">PLAY</span>
+                                </div>
+                                <div class="card-info">
+                                    <div class="card-name">${jogo.titulo}</div>
+                                    <div class="card-sub">Por ${jogo.autor || 'Anônimo'}</div>
+                                </div>
                             </div>
                         `;
+
+                        listaNovos.innerHTML += cardHTML;
+                        listaEmAlta.innerHTML += cardHTML;
                     });
                 })
-                .catch((error) => {
-                    listaDiv.innerText = "Erro ao conectar com o Firestore.";
-                    console.error("Erro:", error);
+                .catch(err => {
+                    console.error(err);
+                    listaNovos.innerText = "Erro ao carregar jogos.";
                 });
         }
 
-        // 2. SALVAR UM NOVO JOGO NO FIRESTORE
+        // Enviar novo jogo
         function enviarJogo() {
             const titulo = document.getElementById('gameTitulo').value;
             const embedUrl = document.getElementById('gameUrl').value;
             const autor = document.getElementById('gameAutor').value;
 
             if (!titulo || !embedUrl) {
-                alert("Por favor, preencha o título e a URL do embed!");
+                alert("Preencha título e URL do jogo!");
                 return;
             }
 
@@ -110,19 +520,15 @@
                 dataCriacao: new Date()
             })
             .then(() => {
-                alert("Jogo publicado com sucesso!");
+                toggleModal('modalEnvio');
                 document.getElementById('gameTitulo').value = '';
                 document.getElementById('gameUrl').value = '';
                 document.getElementById('gameAutor').value = '';
-                carregarJogos(); // Recarrega a lista na tela
+                carregarJogos();
             })
-            .catch((error) => {
-                alert("Erro ao salvar. Verifique se suas regras estão abertas no Firebase.");
-                console.error("Erro:", error);
-            });
+            .catch(err => alert("Erro ao salvar: " + err.message));
         }
 
-        // Inicia puxando os registros salvos
         carregarJogos();
     </script>
 </body>
