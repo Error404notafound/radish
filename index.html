@@ -430,6 +430,255 @@
             font-weight: 700;
             cursor: pointer;
         }
+
+        /* ===================================================
+           NOVOS ESTILOS: DRAWER LATERAL & PÁGINA DE CADASTRO
+        =================================================== */
+        
+        /* Drawer Menu Lateral */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 82%;
+            max-width: 340px;
+            height: 100vh;
+            background: #060709;
+            z-index: 1200;
+            transition: left 0.3s ease;
+            overflow-y: auto;
+            padding: 24px 20px 60px 20px;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.8);
+        }
+
+        .side-menu.active {
+            left: 0;
+        }
+
+        .side-menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1199;
+            display: none;
+            backdrop-filter: blur(3px);
+        }
+
+        .side-menu-overlay.active {
+            display: block;
+        }
+
+        .menu-top-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 25px;
+        }
+
+        .auth-actions a {
+            display: block;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .auth-actions a.login-link {
+            color: #ffffff;
+            font-size: 15px;
+        }
+
+        .close-menu-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .menu-section-label {
+            font-size: 12px;
+            color: #555964;
+            font-weight: 600;
+            margin: 20px 0 10px 0;
+        }
+
+        .menu-links {
+            list-style: none;
+        }
+
+        .menu-links li a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            color: #d1d5db;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 9px 0;
+            transition: color 0.2s;
+        }
+
+        .menu-links li a.active {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .menu-links li a i {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Página de Cadastro (View) */
+        .auth-page {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-body);
+            z-index: 1100;
+            overflow-y: auto;
+            padding: 70px 20px 30px 20px;
+            display: none;
+        }
+
+        .auth-page.active {
+            display: block;
+        }
+
+        .auth-avatar-box {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            background: #111318;
+            border-radius: var(--radius-lg);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            background-size: cover;
+            background-position: center;
+        }
+
+        .upload-avatar-btn {
+            position: absolute;
+            left: 16px;
+            bottom: -18px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #2dd4bf;
+            border: 3px solid var(--bg-body);
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(45, 212, 191, 0.3);
+            z-index: 5;
+        }
+
+        .input-group {
+            margin-bottom: 14px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            color: #8e8e9f;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            background: #12141a;
+            border: 1px solid var(--border);
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
+            color: #fff;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .input-wrapper .toggle-pwd {
+            position: absolute;
+            right: 14px;
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+        }
+
+        .btn-register-main {
+            width: 100%;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 14px;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 14px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .btn-discord {
+            width: 100%;
+            background: #5865f2;
+            color: #fff;
+            border: none;
+            padding: 14px;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        /* Fake Captcha Estilizado */
+        .captcha-box {
+            margin-top: 16px;
+            background: #fff;
+            border-radius: 4px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #000;
+        }
+
+        .captcha-box label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .captcha-box input {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+        }
+
+        .captcha-logo {
+            text-align: right;
+            font-size: 9px;
+            color: #555;
+            font-weight: 700;
+        }
     </style>
 
     <!-- SDKs Firebase Universais -->
@@ -438,9 +687,155 @@
 </head>
 <body>
 
-    <!-- Header -->
+    <!-- OVERLAY MENU LATERAL -->
+    <div class="side-menu-overlay" id="sideMenuOverlay" onclick="toggleSideMenu()"></div>
+
+    <!-- DRAWER / MENU LATERAL -->
+    <aside class="side-menu" id="sideMenu">
+        <div class="menu-top-actions">
+            <div class="auth-actions">
+                <a href="javascript:void(0)" onclick="abrirCadastro()">Registrar</a>
+                <a href="javascript:void(0)" class="login-link" onclick="alert('Tela de Login em breve!')">Conecte-se</a>
+            </div>
+            <button class="close-menu-btn" onclick="toggleSideMenu()">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+
+        <div class="menu-section-label">Menus</div>
+        <ul class="menu-links">
+            <li><a href="#" class="active"><i data-lucide="home"></i> home</a></li>
+            <li><a href="#"><i data-lucide="play"></i> Filmes</a></li>
+            <li><a href="#"><i data-lucide="coffee"></i> Animes</a></li>
+        </ul>
+
+        <div class="menu-section-label">Outros</div>
+        <ul class="menu-links">
+            <li><a href="#"><i data-lucide="grid"></i> Categorias</a></li>
+            <li><a href="#"><i data-lucide="trending-up"></i> Tendências</a></li>
+            <li><a href="#"><i data-lucide="bell"></i> Notificações</a></li>
+            <li><a href="#"><i data-lucide="dices"></i> Surpreenda-me</a></li>
+            <li><a href="#"><i data-lucide="gem"></i> Contribuição</a></li>
+            <li><a href="#"><i data-lucide="calendar"></i> Calendários</a></li>
+            <li><a href="#"><i data-lucide="users"></i> Comunidade</a></li>
+            <li><a href="#"><i data-lucide="message-square"></i> Salas</a></li>
+            <li><a href="#"><i data-lucide="history"></i> Históricos</a></li>
+            <li><a href="#"><i data-lucide="archive"></i> Coleções</a></li>
+        </ul>
+
+        <div class="menu-section-label">Redes sociais</div>
+        <ul class="menu-links">
+            <li><a href="https://discord.com" target="_blank"><i data-lucide="message-circle"></i> Discord</a></li>
+        </ul>
+
+        <div class="menu-section-label">Parceiros</div>
+        <ul class="menu-links">
+            <li><a href="#"><i data-lucide="trophy"></i> ANreyalP</a></li>
+        </ul>
+
+        <div class="menu-section-label">Páginas</div>
+        <ul class="menu-links">
+            <li><a href="#"><i data-lucide="copyright"></i> DMCA</a></li>
+            <li><a href="#"><i data-lucide="shield"></i> Política de Privacidade</a></li>
+            <li><a href="#"><i data-lucide="file-text"></i> Termos da Contribuição</a></li>
+            <li><a href="#"><i data-lucide="alert-circle"></i> Regras da Comunidade</a></li>
+        </ul>
+    </aside>
+
+    <!-- PÁGINA / TELA DE CADASTRO -->
+    <div class="auth-page" id="authPage">
+        <header style="position: fixed; top: 0; left: 0; right: 0; background: var(--bg-body);">
+            <button class="icon-btn" onclick="fecharCadastro()">
+                <i data-lucide="arrow-left"></i>
+            </button>
+            <div class="brand-logo">
+                <h1>RADISH <span>GAMES</span></h1>
+                <small>ラディッシュ ゲーム</small>
+            </div>
+            <button class="icon-btn" style="opacity: 0;">
+                <i data-lucide="search"></i>
+            </button>
+        </header>
+
+        <!-- Container do Avatar/Banner com botão verde de URL -->
+        <div class="auth-avatar-box" id="avatarPreviewBox">
+            <button class="upload-avatar-btn" onclick="toggleModal('modalAvatarUrl')">
+                <i data-lucide="upload" style="width: 20px; height: 20px;"></i>
+            </button>
+        </div>
+
+        <form onsubmit="event.preventDefault(); alert('Conta criada com sucesso!'); fecharCadastro();">
+            <div class="input-group">
+                <label>Nome do usuário</label>
+                <div class="input-wrapper">
+                    <input type="text" placeholder="Nome do usuário" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Email</label>
+                <div class="input-wrapper">
+                    <input type="email" placeholder="Email" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Senha</label>
+                <div class="input-wrapper">
+                    <input type="password" id="pass1" placeholder="Senha" required>
+                    <button type="button" class="toggle-pwd" onclick="togglePasswordVisibility('pass1', this)">
+                        <i data-lucide="eye-off"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Confirmar Senha</label>
+                <div class="input-wrapper">
+                    <input type="password" id="pass2" placeholder="Confirmar Senha" required>
+                    <button type="button" class="toggle-pwd" onclick="togglePasswordVisibility('pass2', this)">
+                        <i data-lucide="eye-off"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-register-main">Criar conta</button>
+            <button type="button" class="btn-discord">
+                <i data-lucide="message-square"></i> Cadastrar com Discord
+            </button>
+
+            <!-- hCaptcha Fake Integrado -->
+            <div class="captcha-box">
+                <label>
+                    <input type="checkbox" required>
+                    <span>Sou humano</span>
+                </label>
+                <div class="captcha-logo">
+                    <span>hCaptcha</span><br>
+                    <small style="color: #999;">Privacidade - Termos</small>
+                </div>
+            </div>
+
+            <p style="text-align: center; font-size: 13px; color: var(--text-secondary); margin-top: 20px;">
+                Já possui uma conta? <a href="#" style="color: #fff; font-weight: 700; text-decoration: none;">Conecte-se</a>
+            </p>
+        </form>
+    </div>
+
+    <!-- MODAL DE ADICIONAR URL DA FOTO DE PERFIL (CLIQUE NO BOTÃO VERDE) -->
+    <div class="form-modal" id="modalAvatarUrl">
+        <div class="form-container">
+            <h3>Foto de Perfil</h3>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Cole a URL de uma imagem para o seu perfil:</p>
+            <input type="url" id="avatarInputUrl" placeholder="https://exemplo.com/sua-foto.jpg">
+            <button class="submit" onclick="definirAvatarUrl()">Salvar Foto</button>
+            <button onclick="toggleModal('modalAvatarUrl')" style="width:100%; background:none; border:none; color:var(--text-secondary); margin-top:10px; cursor:pointer;">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- Header Principal -->
     <header>
-        <button class="icon-btn" onclick="alert('Menu lateral em desenvolvimento!')">
+        <button class="icon-btn" onclick="toggleSideMenu()">
             <i data-lucide="menu"></i>
         </button>
         <a href="#" class="brand-logo">
@@ -504,7 +899,7 @@
             <i data-lucide="clock"></i>
             <span>Histórico</span>
         </button>
-        <button class="nav-item" onclick="alert('Área de membros em breve')">
+        <button class="nav-item" onclick="abrirCadastro()">
             <i data-lucide="user"></i>
             <span>Perfil</span>
         </button>
@@ -539,6 +934,49 @@
     <script>
         // Inicialização de Ícones
         lucide.createIcons();
+
+        // Funções do Drawer Menu Lateral
+        function toggleSideMenu() {
+            const menu = document.getElementById('sideMenu');
+            const overlay = document.getElementById('sideMenuOverlay');
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // Funções da Tela de Cadastro
+        function abrirCadastro() {
+            if (document.getElementById('sideMenu').classList.contains('active')) {
+                toggleSideMenu();
+            }
+            document.getElementById('authPage').classList.add('active');
+        }
+
+        function fecharCadastro() {
+            document.getElementById('authPage').classList.remove('active');
+        }
+
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye-off');
+            }
+            lucide.createIcons();
+        }
+
+        function definirAvatarUrl() {
+            const url = document.getElementById('avatarInputUrl').value;
+            if (url) {
+                document.getElementById('avatarPreviewBox').style.backgroundImage = `url('${url}')`;
+                toggleModal('modalAvatarUrl');
+            } else {
+                alert('Insira uma URL válida!');
+            }
+        }
 
         // Firebase Configuração Oficial
         const firebaseConfig = {
