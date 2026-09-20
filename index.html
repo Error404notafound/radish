@@ -1416,10 +1416,18 @@
                 </div>
 
                 <div class="dpad-cross">
-                    <div class="dpad-wing wing-up" onmousedown="acionarDirecao('ArrowUp')" ontouchstart="acionarDirecao('ArrowUp')"></div>
-                    <div class="dpad-wing wing-down" onmousedown="acionarDirecao('ArrowDown')" ontouchstart="acionarDirecao('ArrowDown')"></div>
-                    <div class="dpad-wing wing-left" onmousedown="acionarDirecao('ArrowLeft')" ontouchstart="acionarDirecao('ArrowLeft')"></div>
-                    <div class="dpad-wing wing-right" onmousedown="acionarDirecao('ArrowRight')" ontouchstart="acionarDirecao('ArrowRight')"></div>
+                    <div class="dpad-wing wing-up" 
+                         onmousedown="pressionarDirecao('ArrowUp', event)" onmouseup="soltarDirecao('ArrowUp', event)"
+                         ontouchstart="pressionarDirecao('ArrowUp', event)" ontouchend="soltarDirecao('ArrowUp', event)"></div>
+                    <div class="dpad-wing wing-down" 
+                         onmousedown="pressionarDirecao('ArrowDown', event)" onmouseup="soltarDirecao('ArrowDown', event)"
+                         ontouchstart="pressionarDirecao('ArrowDown', event)" ontouchend="soltarDirecao('ArrowDown', event)"></div>
+                    <div class="dpad-wing wing-left" 
+                         onmousedown="pressionarDirecao('ArrowLeft', event)" onmouseup="soltarDirecao('ArrowLeft', event)"
+                         ontouchstart="pressionarDirecao('ArrowLeft', event)" ontouchend="soltarDirecao('ArrowLeft', event)"></div>
+                    <div class="dpad-wing wing-right" 
+                         onmousedown="pressionarDirecao('ArrowRight', event)" onmouseup="soltarDirecao('ArrowRight', event)"
+                         ontouchstart="pressionarDirecao('ArrowRight', event)" ontouchend="soltarDirecao('ArrowRight', event)"></div>
                 </div>
             </div>
         </div>
@@ -1764,34 +1772,51 @@
             lucide.createIcons();
         }
 
-        // Botão A1 (Verde): Simula clique onde o cursor está apontando
+        // Botão A1 (Verde): Aciona o clique real e seleciona opções no menu do jogo
         function clicarComCursorVirtual(e) {
             if (e) e.preventDefault();
-            const screen = document.getElementById('screenAreaBox');
-            const rect = screen.getBoundingClientRect();
 
-            const clickX = rect.left + cursorX;
-            const clickY = rect.top + cursorY;
-
-            // Animação de clique no cursor
+            const iframe = document.getElementById('gameScreenIframe');
             const cursor = document.getElementById('virtualCursor');
-            cursor.style.transform = `translate(${cursorX}px, ${cursorY}px) scale(0.8)`;
-            setTimeout(() => {
-                cursor.style.transform = `translate(${cursorX}px, ${cursorY}px) scale(1)`;
-            }, 100);
 
-            // Dispara clique no ponto da tela
-            const elementoClicado = document.elementFromPoint(clickX, clickY);
-            if (elementoClicado) {
-                elementoClicado.dispatchEvent(new MouseEvent('click', {
-                    bubbles: true,
-                    clientX: clickX,
-                    clientY: clickY
-                }));
+            // 1. Efeito visual imediato no cursor virtual
+            if (cursor) {
+                cursor.style.transform = `translate(${cursorX}px, ${cursorY}px) scale(0.75)`;
+                setTimeout(() => {
+                    cursor.style.transform = `translate(${cursorX}px, ${cursorY}px) scale(1)`;
+                }, 100);
             }
 
-            // Garante foco do teclado para o jogo
-            manterFocoNoJogo();
+            // 2. Garante o foco dentro do iframe antes do comando
+            if (iframe) {
+                iframe.focus();
+                if (iframe.contentWindow) {
+                    try {
+                        iframe.contentWindow.focus();
+                    } catch (err) {}
+                }
+            }
+
+            // 3. Sequência de acionamento: Envia Enter e Barra de Espaço
+            // (Isso seleciona botões como PLAY, START e CONTINUAR no menu do jogo)
+            dispararEventoTecla('keydown', 'Enter');
+            dispararEventoTecla('keydown', 'Space');
+            dispararEventoTecla('keydown', 'KeyZ');
+
+            setTimeout(() => {
+                dispararEventoTecla('keyup', 'Enter');
+                dispararEventoTecla('keyup', 'Space');
+                dispararEventoTecla('keyup', 'KeyZ');
+            }, 80);
+
+            // 4. Envia mensagem de clique nas coordenadas exatas via postMessage
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage({
+                    type: 'click',
+                    x: cursorX,
+                    y: cursorY
+                }, "*");
+            }
         }
 
         // Botão A2 (Azul): Fecha/Oculta o cursor virtual
@@ -1831,9 +1856,16 @@
             alternarModoControle();
         }
 
-        function acionarDirecao(direcao) {
+        function pressionarDirecao(direcao, e) {
+            if (e) e.preventDefault();
+            manterFocoNoJogo();
             dispararEventoTecla('keydown', direcao);
-            setTimeout(() => dispararEventoTecla('keyup', direcao), 120);
+        }
+
+        function soltarDirecao(direcao, e) {
+            if (e) e.preventDefault();
+            dispararEventoTecla('keyup', direcao);
+            manterFocoNoJogo();
         }
 
         // Arraste do D-Pad pelo Container
