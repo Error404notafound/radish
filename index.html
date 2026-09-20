@@ -37,7 +37,7 @@
             overflow-x: hidden;
         }
 
-        /* HEADER */
+        /* HEADER PRINCIPAL */
         header {
             position: sticky;
             top: 0;
@@ -312,38 +312,215 @@
             z-index: 2;
         }
 
-        /* REPRODUTOR / MODAL DE JOGO */
-        .player-modal {
+        /* ===================================================
+           TELA / CONTAINER DO JOGO COM CONTROLES ARCADE
+        =================================================== */
+        .game-page-view {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.94);
-            z-index: 1000;
+            background: #000000;
+            z-index: 1500;
+            overflow-y: auto;
+            padding-bottom: 70px;
             display: none;
-            flex-direction: column;
         }
 
-        .player-modal.active { display: flex; }
+        .game-page-view.active { display: block; }
 
-        .player-bar {
+        .player-top-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 14px 16px;
-            background: var(--bg-surface);
-            border-bottom: 1px solid var(--border);
+            padding: 12px 14px;
+            gap: 8px;
+            overflow-x: auto;
+        }
+        .player-top-bar::-webkit-scrollbar { display: none; }
+
+        .btn-pill-orange {
+            background: #ff3b2f;
+            color: #fff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+            cursor: pointer;
         }
 
-        .player-frame-container {
-            flex: 1;
+        .btn-pill-dark {
+            background: #18191f;
+            color: #d1d5db;
+            border: 1px solid var(--border);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .player-top-icons {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-left: auto;
+            color: #9ca3af;
+        }
+
+        .game-screen-area {
+            position: relative;
             width: 100%;
-            background: #000;
+            height: 225px;
+            background: #0f1115;
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .player-frame-container iframe {
+        .game-screen-area iframe {
+            position: absolute;
+            inset: 0;
             width: 100%;
             height: 100%;
             border: none;
+            display: none;
+            z-index: 5;
         }
+
+        .big-play-btn {
+            position: relative;
+            z-index: 6;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: #ff3b2f;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255, 59, 47, 0.6);
+            transition: transform 0.15s;
+        }
+        .big-play-btn:active { transform: scale(0.92); }
+
+        .game-mode-bar {
+            margin: 14px 14px 8px 14px;
+            background: #121318;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .game-mode-tag {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .mode-icon-box {
+            background: #ff3b2f;
+            border-radius: 6px;
+            padding: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Fliperama / Arcade Controls */
+        .arcade-controller-panel {
+            background: #090a0d;
+            border-radius: 14px;
+            margin: 10px 14px 16px 14px;
+            padding: 18px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            user-select: none;
+        }
+
+        .joystick-base {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #e6e6e6 0%, #a8a8a8 100%);
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.4), 0 4px 12px rgba(0,0,0,0.8);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .d-arrow {
+            position: absolute;
+            font-size: 14px;
+            font-weight: 900;
+            color: rgba(0,0,0,0.25);
+            pointer-events: none;
+        }
+        .d-up { top: 6px; }
+        .d-down { bottom: 6px; }
+        .d-left { left: 8px; }
+        .d-right { right: 8px; }
+
+        .joystick-thumb {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #555 0%, #111 80%);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.9);
+            cursor: pointer;
+            touch-action: none;
+            transition: transform 0.08s ease;
+        }
+
+        .arcade-buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+
+        .arc-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 3px solid #282830;
+            font-size: 10px;
+            font-weight: 800;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.7);
+            transition: transform 0.08s;
+        }
+        .arc-btn:active { transform: scale(0.88); }
+        .arc-green { background: #22c55e; color: #fff; }
+        .arc-blue { background: #3b82f6; color: #fff; }
+        .arc-red { background: #ef4444; color: #fff; }
+        .arc-yellow { background: #eab308; color: #000; }
+        .arc-black { background: #202228; color: #8c909e; border-color: #383a42; }
+
+        .game-detail-box { padding: 0 16px; }
+        .badge-age { background: #f59e0b; color: #000; font-weight: 900; font-size: 11px; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-right: 6px; }
+        .game-tags-list { font-size: 11px; color: var(--text-secondary); display: inline-flex; gap: 8px; vertical-align: middle; }
+        .game-detail-title { font-size: 18px; font-weight: 800; margin: 10px 0 14px 0; line-height: 1.3; }
+        .game-reactions-row { display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: var(--text-secondary); border-bottom: 2px solid var(--primary); padding-bottom: 12px; margin-bottom: 16px; }
+        .reactions-right { display: flex; align-items: center; gap: 16px; }
+        .reaction-item { display: flex; align-items: center; gap: 6px; cursor: pointer; }
 
         /* BOTTOM NAVIGATION BAR */
         .bottom-nav {
@@ -381,7 +558,7 @@
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.85);
-            z-index: 1400;
+            z-index: 1600;
             display: none;
             align-items: center;
             justify-content: center;
@@ -1079,7 +1256,7 @@
             <button class="icon-btn" style="opacity: 0;"><i data-lucide="search"></i></button>
         </header>
 
-        <!-- Banner com botão circular verde (Conforme imagem) -->
+        <!-- Banner com botão circular verde -->
         <div style="position: relative; width: 100%; height: 180px; background: #111317; border-radius: var(--radius-lg); margin-bottom: 25px; border: 1px solid var(--border); background-size: cover; background-position: center;" id="avatarPreviewBox">
             <button type="button" onclick="toggleModal('modalAvatarUrl')" style="position: absolute; left: 16px; bottom: -18px; width: 44px; height: 44px; border-radius: 50%; background: #2dd4bf; border: 3px solid var(--bg-body); color: #000; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(45, 212, 191, 0.3); z-index: 5;">
                 <i data-lucide="upload" style="width: 20px; height: 20px;"></i>
@@ -1099,7 +1276,7 @@
         </form>
     </div>
 
-    <!-- MODAL PARA INSERIR URL DA FOTO DE PERFIL (ACIONADO PELO BOTÃO VERDE) -->
+    <!-- MODAL PARA INSERIR URL DA FOTO DE PERFIL (BOTÃO VERDE) -->
     <div class="form-modal" id="modalAvatarUrl">
         <div class="form-container">
             <h3>Foto de Perfil</h3>
@@ -1107,6 +1284,83 @@
             <input type="url" id="avatarInputUrl" placeholder="https://exemplo.com/sua-foto.jpg">
             <button class="submit" onclick="definirAvatarUrl()">Salvar Foto</button>
             <button type="button" onclick="toggleModal('modalAvatarUrl')" style="width:100%; background:none; border:none; color:var(--text-secondary); margin-top:10px; cursor:pointer;">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- CONTAINER / PÁGINA DO JOGO COM CONTROLES VIRTUAIS (ARCADE) -->
+    <div class="game-page-view" id="gamePageView">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border); background: #0b0c10;">
+            <button class="icon-btn" onclick="fecharPaginaJogo()"><i data-lucide="arrow-left"></i></button>
+            <div class="brand-logo"><h1>RADISH <span>GAMES</span></h1></div>
+            <button class="icon-btn" onclick="alert('Opções do jogo')"><i data-lucide="more-vertical"></i></button>
+        </div>
+
+        <div class="player-top-bar">
+            <button class="btn-pill-orange">Mobile / Celular</button>
+            <button class="btn-pill-dark">FullHD / HD</button>
+            <div class="player-top-icons">
+                <i data-lucide="share-2" style="width:16px; cursor:pointer;" onclick="navigator.clipboard.writeText(window.location.href); alert('Link copiado!');"></i>
+                <i data-lucide="layers" style="width:16px; cursor:pointer;"></i>
+                <i data-lucide="users" style="width:16px; cursor:pointer;"></i>
+                <i data-lucide="alert-circle" style="width:16px; cursor:pointer;"></i>
+            </div>
+        </div>
+
+        <!-- Tela do Jogo / Player Iframe -->
+        <div class="game-screen-area" id="screenAreaBox">
+            <button class="big-play-btn" id="btnBigPlay" onclick="iniciarJogoIframe()">
+                <i data-lucide="play" style="fill: #fff; margin-left: 4px;"></i>
+            </button>
+            <iframe id="gameScreenIframe" src="" allowfullscreen></iframe>
+        </div>
+
+        <div class="game-mode-bar">
+            <div class="game-mode-tag">
+                <div class="mode-icon-box"><i data-lucide="play" style="width:14px; height:14px; fill:#fff;"></i></div>
+                <span>Jogar Contra</span>
+            </div>
+            <i data-lucide="chevron-down" style="color:var(--text-secondary); width:16px;"></i>
+        </div>
+
+        <!-- Painel de Controles Virtuais Arcade -->
+        <div class="arcade-controller-panel">
+            <div class="joystick-base" id="joystickBase">
+                <span class="d-arrow d-up">▲</span>
+                <span class="d-arrow d-down">▼</span>
+                <span class="d-arrow d-left">◀</span>
+                <span class="d-arrow d-right">▶</span>
+                <div class="joystick-thumb" id="joystickThumb"></div>
+            </div>
+
+            <div class="arcade-buttons-grid">
+                <button class="arc-btn arc-green" onclick="simularTecla('KeyZ')">A1</button>
+                <button class="arc-btn arc-blue" onclick="simularTecla('KeyX')">A2</button>
+                <button class="arc-btn arc-black" onclick="simularTecla('KeyC')">A3</button>
+                <button class="arc-btn arc-black" onclick="simularTecla('ShiftLeft')">S1</button>
+                <button class="arc-btn arc-red" onclick="simularTecla('Space')">A4</button>
+                <button class="arc-btn arc-yellow" onclick="simularTecla('KeyA')">A5</button>
+                <button class="arc-btn arc-black" onclick="simularTecla('KeyS')">A6</button>
+                <button class="arc-btn arc-black" onclick="simularTecla('Enter')">S2</button>
+            </div>
+        </div>
+
+        <div class="game-detail-box">
+            <div>
+                <span class="badge-age">14</span>
+                <div class="game-tags-list">
+                    <span>Comédia</span> • <span>Dublado</span> • <span>Fantasia</span> • <span>Romance</span>
+                </div>
+            </div>
+            <h2 class="game-detail-title" id="detailGameTitle">Título do Jogo</h2>
+            <div class="game-reactions-row">
+                <div><span id="detailGameViews">32</span> Visualizações</div>
+                <div class="reactions-right">
+                    <div class="reaction-item" onclick="curtirJogo(1)"><i data-lucide="thumbs-up" style="width:16px;"></i> <span id="likeCount">10</span></div>
+                    <div class="reaction-item" onclick="curtirJogo(-1)"><i data-lucide="thumbs-down" style="width:16px;"></i> 0</div>
+                </div>
+            </div>
+            <h4 style="font-size:14px; margin-bottom: 6px;">Sinopse</h4>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5;">Jogue diretamente pelo celular utilizando os controles digitais virtuais ou pelo teclado no PC.</p>
         </div>
     </div>
 
@@ -1155,17 +1409,6 @@
         <button class="nav-item" onclick="abrirView('viewNotificacoes')"><i data-lucide="bell"></i><span>Avisos</span></button>
         <button class="nav-item" onclick="abrirView('viewPerfil')"><i data-lucide="user"></i><span>Perfil</span></button>
     </nav>
-
-    <!-- MODAL PLAYER -->
-    <div class="player-modal" id="modalPlayer">
-        <div class="player-bar">
-            <span id="playerTitulo" style="font-weight:700; font-size:14px;">Carregando Game...</span>
-            <button class="icon-btn" onclick="fecharPlayer()"><i data-lucide="x"></i></button>
-        </div>
-        <div class="player-frame-container">
-            <iframe id="gameIframe" src="" allow="fullscreen; autoplay"></iframe>
-        </div>
-    </div>
 
     <!-- MODAL DE ENVIO -->
     <div class="form-modal" id="modalEnvio">
@@ -1226,6 +1469,76 @@
             document.getElementById(tabId).classList.add('active');
         }
 
+        // CONTROLES DA PÁGINA DO JOGO (ARCADE)
+        let jogoAtualEmbed = "";
+
+        function abrirContainerJogo(url, titulo, cover) {
+            jogoAtualEmbed = url;
+            document.getElementById('detailGameTitle').innerText = titulo;
+            
+            const screen = document.getElementById('screenAreaBox');
+            screen.style.backgroundImage = `url('${cover || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400&auto=format&fit=crop'}')`;
+            
+            document.getElementById('btnBigPlay').style.display = 'flex';
+            document.getElementById('gameScreenIframe').style.display = 'none';
+            document.getElementById('gameScreenIframe').src = '';
+
+            document.getElementById('gamePageView').classList.add('active');
+            lucide.createIcons();
+        }
+
+        function fecharPaginaJogo() {
+            document.getElementById('gameScreenIframe').src = '';
+            document.getElementById('gamePageView').classList.remove('active');
+        }
+
+        function iniciarJogoIframe() {
+            document.getElementById('btnBigPlay').style.display = 'none';
+            const iframe = document.getElementById('gameScreenIframe');
+            iframe.src = jogoAtualEmbed;
+            iframe.style.display = 'block';
+        }
+
+        function curtirJogo(val) {
+            const count = document.getElementById('likeCount');
+            count.innerText = parseInt(count.innerText) + val;
+        }
+
+        function simularTecla(codigo) {
+            window.dispatchEvent(new KeyboardEvent('keydown', { code: codigo, key: codigo }));
+            setTimeout(() => {
+                window.dispatchEvent(new KeyboardEvent('keyup', { code: codigo, key: codigo }));
+            }, 100);
+        }
+
+        // Joystick Touch para Celular
+        const thumb = document.getElementById('joystickThumb');
+        const base = document.getElementById('joystickBase');
+        let drag = false;
+
+        function handleJoystick(e) {
+            if (!drag || !base || !thumb) return;
+            const rect = base.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            const dx = clientX - (rect.left + rect.width / 2);
+            const dy = clientY - (rect.top + rect.height / 2);
+            const dist = Math.min(35, Math.hypot(dx, dy));
+            const angle = Math.atan2(dy, dx);
+
+            thumb.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px)`;
+        }
+
+        if(thumb && base) {
+            thumb.addEventListener('mousedown', () => drag = true);
+            thumb.addEventListener('touchstart', () => drag = true);
+            window.addEventListener('mouseup', () => { drag = false; thumb.style.transform = 'translate(0,0)'; });
+            window.addEventListener('touchend', () => { drag = false; thumb.style.transform = 'translate(0,0)'; });
+            window.addEventListener('mousemove', handleJoystick);
+            window.addEventListener('touchmove', handleJoystick);
+        }
+
         // FIREBASE & DATABASE
         const firebaseConfig = {
             apiKey: "AIzaSyDDVplbkVC4YepZDJOzFG9bqgzz1tBAOq8",
@@ -1240,13 +1553,10 @@
         const db = firebase.firestore();
         let cacheJogos = [];
 
-        // ==========================================
         // SISTEMA REAL DE USUÁRIO E FOTO NO FIRESTORE
-        // ==========================================
         let usuarioAtivo = null;
         let avatarUrlTemporario = "";
 
-        // Salvar Foto pelo Modal Verde
         function definirAvatarUrl() {
             const url = document.getElementById('avatarInputUrl').value.trim();
             if (!url) {
@@ -1272,7 +1582,6 @@
             toggleModal('modalAvatarUrl');
         }
 
-        // Salva usuário no banco de dados Firestore
         function cadastrarUsuarioEfetivo() {
             const nome = document.getElementById('regUsuarioNome').value.trim();
             const email = document.getElementById('regUsuarioEmail').value.trim();
@@ -1294,7 +1603,6 @@
                     dadosUsuario.id = docRef.id;
                     usuarioAtivo = dadosUsuario;
 
-                    // Guarda a sessão localmente para não deslogar no F5
                     localStorage.setItem('radish_user', JSON.stringify(dadosUsuario));
 
                     aplicarVisualUsuario(dadosUsuario);
@@ -1361,7 +1669,7 @@
             }
         }
 
-        // FUNÇÕES DO PLAYER & BUSCA
+        // BUSCA & MODAIS
         function toggleSearch() {
             const drawer = document.getElementById('searchDrawer');
             drawer.classList.toggle('active');
@@ -1372,17 +1680,7 @@
             document.getElementById(id).classList.toggle('active');
         }
 
-        function abrirPlayer(url, titulo) {
-            document.getElementById('playerTitulo').innerText = titulo;
-            document.getElementById('gameIframe').src = url;
-            document.getElementById('modalPlayer').classList.add('active');
-        }
-
-        function fecharPlayer() {
-            document.getElementById('gameIframe').src = '';
-            document.getElementById('modalPlayer').classList.remove('active');
-        }
-
+        // RENDERIZAÇÃO DOS JOGOS
         function carregarJogos() {
             db.collection("jogos").get().then((snapshot) => {
                 cacheJogos = [];
@@ -1409,7 +1707,7 @@
                 const capa = jogo.cover || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400&auto=format&fit=crop';
                 
                 listaNovos.innerHTML += `
-                    <div class="game-card" onclick="abrirPlayer('${jogo.embedUrl}', '${jogo.titulo}')">
+                    <div class="game-card" onclick="abrirContainerJogo('${jogo.embedUrl}', '${jogo.titulo}', '${capa}')">
                         <div class="poster-wrapper">
                             <img class="poster-img" src="${capa}" loading="lazy" alt="${jogo.titulo}">
                             <span class="badge-status">Novo</span>
@@ -1424,7 +1722,7 @@
 
                 if (index < 5) {
                     listaTop5.innerHTML += `
-                        <div class="game-card top-card" onclick="abrirPlayer('${jogo.embedUrl}', '${jogo.titulo}')">
+                        <div class="game-card top-card" onclick="abrirContainerJogo('${jogo.embedUrl}', '${jogo.titulo}', '${capa}')">
                             <div class="top-number">${index + 1}</div>
                             <div class="poster-wrapper">
                                 <img class="poster-img" src="${capa}" loading="lazy" alt="${jogo.titulo}">
@@ -1438,6 +1736,7 @@
                     `;
                 }
             });
+            lucide.createIcons();
         }
 
         function filtrarJogos() {
