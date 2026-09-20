@@ -381,7 +381,7 @@
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.85);
-            z-index: 999;
+            z-index: 1400;
             display: none;
             align-items: center;
             justify-content: center;
@@ -711,9 +711,7 @@
             position: relative;
         }
 
-        .tab-btn.active {
-            color: var(--primary);
-        }
+        .tab-btn.active { color: var(--primary); }
 
         .tab-btn.active::after {
             content: '';
@@ -773,7 +771,7 @@
         .switch-label h5 { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
         .switch-label p { font-size: 11px; color: var(--text-secondary); max-width: 260px; }
 
-        /* Toggle Switch Estilo iOS */
+        /* Toggle Switch */
         .toggle-switch {
             position: relative;
             width: 44px;
@@ -836,18 +834,18 @@
             <!-- ESTADO 1: DESLOGADO -->
             <div class="auth-actions" id="authActionsDeslogado">
                 <a href="javascript:void(0)" onclick="abrirCadastro()">Registrar</a>
-                <a href="javascript:void(0)" style="color:#8e8e9f;" onclick="fazerLoginSimulado()">Conecte-se</a>
+                <a href="javascript:void(0)" style="color:#8e8e9f;" onclick="abrirCadastro()">Conecte-se</a>
             </div>
 
-            <!-- ESTADO 2: LOGADO (CONFORME OS PRINTS) -->
+            <!-- ESTADO 2: LOGADO -->
             <div class="user-profile-header" id="authActionsLogado" style="display:none;" onclick="toggleUserDropdown(event)">
                 <div class="user-avatar-circle" id="menuUserAvatar">E</div>
                 <div>
                     <div class="user-greeting">Olá 👋,</div>
-                    <div class="user-name-title" id="menuUserName">Error404pagenotafo</div>
+                    <div class="user-name-title" id="menuUserName">Usuário</div>
                 </div>
 
-                <!-- MODAL DROPDOWN DO USUÁRIO (APONTADO PELA SETA AZUL, VERDE E ROXA) -->
+                <!-- MODAL DROPDOWN DO USUÁRIO -->
                 <div class="user-dropdown-card" id="userDropdownMenu">
                     <a href="javascript:void(0)" class="dropdown-link" onclick="abrirView('viewPerfil')">
                         <i data-lucide="user" style="width:16px; height:16px;"></i> Meu perfil
@@ -899,14 +897,14 @@
             <button class="icon-btn" style="opacity:0;"><i data-lucide="search"></i></button>
         </div>
 
-        <div class="breadcrumbs">home &mdash; <span id="profileBreadcrumbUser">Error404pagenotafo</span></div>
+        <div class="breadcrumbs">home &mdash; <span id="profileBreadcrumbUser">Usuário</span></div>
 
         <div class="profile-banner">
             <div class="profile-pic-large" id="profilePageAvatar">E</div>
         </div>
 
-        <h2 class="profile-username" id="profilePageName">Error404pagenotafo</h2>
-        <div class="profile-date"><i data-lucide="calendar" style="width:14px; height:14px;"></i> 19/04/2026</div>
+        <h2 class="profile-username" id="profilePageName">Usuário</h2>
+        <div class="profile-date"><i data-lucide="calendar" style="width:14px; height:14px;"></i> Hoje</div>
 
         <div class="profile-stats-row">
             <div class="stat-box"><div class="stat-num">0</div><div class="stat-label">Seguidores</div></div>
@@ -1031,7 +1029,7 @@
             <button class="btn-save-def" onclick="alert('Alterações salvas!')"><i data-lucide="save" style="width:16px; display:inline; vertical-align:middle;"></i> Salvar alterações</button>
         </div>
 
-        <!-- Aba Preferências (Com Switches) -->
+        <!-- Aba Preferências -->
         <div class="tab-content-panel" id="tabDefPreferencias">
             <div class="def-group-title"><i data-lucide="sliders" style="color:var(--primary); width:18px;"></i> Preferências</div>
             <div class="def-group-sub">Ajuste o comportamento da sua conta no site.</div>
@@ -1073,13 +1071,20 @@
         </div>
     </div>
 
-    <!-- PÁGINA DE CADASTRO -->
+    <!-- PÁGINA DE CADASTRO COM BANNER E BOTÃO CIRCULAR VERDE -->
     <div class="app-view" id="authPage">
         <header style="position: fixed; top: 0; left: 0; right: 0; background: var(--bg-body);">
             <button class="icon-btn" onclick="fecharView('authPage')"><i data-lucide="arrow-left"></i></button>
             <div class="brand-logo"><h1>RADISH <span>GAMES</span></h1></div>
             <button class="icon-btn" style="opacity: 0;"><i data-lucide="search"></i></button>
         </header>
+
+        <!-- Banner com botão circular verde (Conforme imagem) -->
+        <div style="position: relative; width: 100%; height: 180px; background: #111317; border-radius: var(--radius-lg); margin-bottom: 25px; border: 1px solid var(--border); background-size: cover; background-position: center;" id="avatarPreviewBox">
+            <button type="button" onclick="toggleModal('modalAvatarUrl')" style="position: absolute; left: 16px; bottom: -18px; width: 44px; height: 44px; border-radius: 50%; background: #2dd4bf; border: 3px solid var(--bg-body); color: #000; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(45, 212, 191, 0.3); z-index: 5;">
+                <i data-lucide="upload" style="width: 20px; height: 20px;"></i>
+            </button>
+        </div>
 
         <form onsubmit="event.preventDefault(); cadastrarUsuarioEfetivo();">
             <div class="input-group" style="margin-bottom:14px;">
@@ -1088,10 +1093,21 @@
             </div>
             <div class="input-group" style="margin-bottom:14px;">
                 <label style="font-size:12px; color:var(--text-secondary); display:block; margin-bottom:6px;">Email</label>
-                <input type="email" placeholder="Email" required style="width:100%; background:#12141a; border:1px solid var(--border); padding:13px; border-radius:var(--radius-md); color:#fff; outline:none;">
+                <input type="email" id="regUsuarioEmail" placeholder="Email" required style="width:100%; background:#12141a; border:1px solid var(--border); padding:13px; border-radius:var(--radius-md); color:#fff; outline:none;">
             </div>
             <button type="submit" class="btn-save-def" style="margin-top:10px;">Criar conta</button>
         </form>
+    </div>
+
+    <!-- MODAL PARA INSERIR URL DA FOTO DE PERFIL (ACIONADO PELO BOTÃO VERDE) -->
+    <div class="form-modal" id="modalAvatarUrl">
+        <div class="form-container">
+            <h3>Foto de Perfil</h3>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Cole a URL de uma imagem para o seu perfil:</p>
+            <input type="url" id="avatarInputUrl" placeholder="https://exemplo.com/sua-foto.jpg">
+            <button class="submit" onclick="definirAvatarUrl()">Salvar Foto</button>
+            <button type="button" onclick="toggleModal('modalAvatarUrl')" style="width:100%; background:none; border:none; color:var(--text-secondary); margin-top:10px; cursor:pointer;">Cancelar</button>
+        </div>
     </div>
 
     <!-- HEADER PRINCIPAL -->
@@ -1210,43 +1226,7 @@
             document.getElementById(tabId).classList.add('active');
         }
 
-        // AUTENTICAÇÃO SIMULADA (VISUAL DOS PRINTS)
-        let usuarioAtivo = null;
-
-        function cadastrarUsuarioEfetivo() {
-            const nome = document.getElementById('regUsuarioNome').value || 'Error404pagenotafo';
-            definirSessaoUsuario(nome);
-            fecharView('authPage');
-            alert('Conta criada com sucesso!');
-        }
-
-        function fazerLoginSimulado() {
-            definirSessaoUsuario('Error404pagenotafo');
-            alert('Conectado como Error404pagenotafo!');
-        }
-
-        function definirSessaoUsuario(nome) {
-            usuarioAtivo = nome;
-            document.getElementById('authActionsDeslogado').style.display = 'none';
-            document.getElementById('authActionsLogado').style.display = 'flex';
-
-            document.getElementById('menuUserName').innerText = nome;
-            document.getElementById('menuUserAvatar').innerText = nome.charAt(0).toUpperCase();
-
-            document.getElementById('profilePageName').innerText = nome;
-            document.getElementById('profileBreadcrumbUser').innerText = nome;
-            document.getElementById('profilePageAvatar').innerText = nome.charAt(0).toUpperCase();
-        }
-
-        function desconectarUsuario() {
-            usuarioAtivo = null;
-            document.getElementById('authActionsDeslogado').style.display = 'block';
-            document.getElementById('authActionsLogado').style.display = 'none';
-            document.getElementById('userDropdownMenu').classList.remove('active');
-            alert('Você foi desconectado!');
-        }
-
-        // FIREBASE & PLAYER
+        // FIREBASE & DATABASE
         const firebaseConfig = {
             apiKey: "AIzaSyDDVplbkVC4YepZDJOzFG9bqgzz1tBAOq8",
             authDomain: "radish-1c9ed.firebaseapp.com",
@@ -1260,6 +1240,128 @@
         const db = firebase.firestore();
         let cacheJogos = [];
 
+        // ==========================================
+        // SISTEMA REAL DE USUÁRIO E FOTO NO FIRESTORE
+        // ==========================================
+        let usuarioAtivo = null;
+        let avatarUrlTemporario = "";
+
+        // Salvar Foto pelo Modal Verde
+        function definirAvatarUrl() {
+            const url = document.getElementById('avatarInputUrl').value.trim();
+            if (!url) {
+                alert('Insira uma URL válida!');
+                return;
+            }
+
+            avatarUrlTemporario = url;
+
+            const previewBox = document.getElementById('avatarPreviewBox');
+            if (previewBox) previewBox.style.backgroundImage = `url('${url}')`;
+
+            if (usuarioAtivo && usuarioAtivo.id) {
+                db.collection("usuarios").doc(usuarioAtivo.id).update({
+                    avatarUrl: url
+                }).then(() => {
+                    usuarioAtivo.avatarUrl = url;
+                    localStorage.setItem('radish_user', JSON.stringify(usuarioAtivo));
+                    aplicarVisualUsuario(usuarioAtivo);
+                });
+            }
+
+            toggleModal('modalAvatarUrl');
+        }
+
+        // Salva usuário no banco de dados Firestore
+        function cadastrarUsuarioEfetivo() {
+            const nome = document.getElementById('regUsuarioNome').value.trim();
+            const email = document.getElementById('regUsuarioEmail').value.trim();
+
+            if (!nome) {
+                alert("Digite o nome de usuário!");
+                return;
+            }
+
+            const dadosUsuario = {
+                nome: nome,
+                email: email,
+                avatarUrl: avatarUrlTemporario || '',
+                dataCriacao: new Date()
+            };
+
+            db.collection("usuarios").add(dadosUsuario)
+                .then((docRef) => {
+                    dadosUsuario.id = docRef.id;
+                    usuarioAtivo = dadosUsuario;
+
+                    // Guarda a sessão localmente para não deslogar no F5
+                    localStorage.setItem('radish_user', JSON.stringify(dadosUsuario));
+
+                    aplicarVisualUsuario(dadosUsuario);
+                    fecharView('authPage');
+                    alert('Conta criada com sucesso!');
+                })
+                .catch((error) => {
+                    console.error("Erro ao salvar usuário:", error);
+                    alert("Erro ao conectar com o banco. Verifique as Regras de Segurança no Console Firebase.");
+                });
+        }
+
+        function aplicarVisualUsuario(user) {
+            document.getElementById('authActionsDeslogado').style.display = 'none';
+            document.getElementById('authActionsLogado').style.display = 'flex';
+
+            document.getElementById('menuUserName').innerText = user.nome;
+            document.getElementById('profilePageName').innerText = user.nome;
+            document.getElementById('profileBreadcrumbUser').innerText = user.nome;
+
+            const menuAvatar = document.getElementById('menuUserAvatar');
+            const profileAvatar = document.getElementById('profilePageAvatar');
+
+            if (user.avatarUrl) {
+                menuAvatar.innerText = '';
+                menuAvatar.style.backgroundImage = `url('${user.avatarUrl}')`;
+
+                profileAvatar.innerText = '';
+                profileAvatar.style.backgroundImage = `url('${user.avatarUrl}')`;
+            } else {
+                const letra = user.nome.charAt(0).toUpperCase();
+                menuAvatar.style.backgroundImage = 'none';
+                menuAvatar.innerText = letra;
+
+                profileAvatar.style.backgroundImage = 'none';
+                profileAvatar.innerText = letra;
+            }
+        }
+
+        function desconectarUsuario() {
+            usuarioAtivo = null;
+            avatarUrlTemporario = "";
+            localStorage.removeItem('radish_user');
+
+            document.getElementById('authActionsDeslogado').style.display = 'block';
+            document.getElementById('authActionsLogado').style.display = 'none';
+            document.getElementById('userDropdownMenu').classList.remove('active');
+            
+            fecharView('viewPerfil');
+            fecharView('viewDefinicoes');
+            fecharView('viewNotificacoes');
+            alert('Você foi desconectado!');
+        }
+
+        function verificarSessaoSalva() {
+            const salvo = localStorage.getItem('radish_user');
+            if (salvo) {
+                try {
+                    usuarioAtivo = JSON.parse(salvo);
+                    aplicarVisualUsuario(usuarioAtivo);
+                } catch (e) {
+                    localStorage.removeItem('radish_user');
+                }
+            }
+        }
+
+        // FUNÇÕES DO PLAYER & BUSCA
         function toggleSearch() {
             const drawer = document.getElementById('searchDrawer');
             drawer.classList.toggle('active');
@@ -1359,7 +1461,7 @@
                 titulo: titulo,
                 embedUrl: embedUrl,
                 cover: cover || '',
-                autor: autor || (usuarioAtivo || "Anônimo"),
+                autor: autor || (usuarioAtivo ? usuarioAtivo.nome : "Anônimo"),
                 dataCriacao: new Date()
             }).then(() => {
                 toggleModal('modalEnvio');
@@ -1371,6 +1473,8 @@
             }).catch(e => alert("Erro: " + e.message));
         }
 
+        // Inicialização
+        verificarSessaoSalva();
         carregarJogos();
     </script>
 </body>
