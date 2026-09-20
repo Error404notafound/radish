@@ -438,109 +438,6 @@
             justify-content: center;
         }
 
-        /* ===================================================
-           CAMADA DO CURSOR VIRTUAL E D-PAD MODULAR
-        =================================================== */
-        .virtual-cursor {
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            pointer-events: none;
-            z-index: 99;
-            display: block;
-            transition: transform 0.04s linear;
-            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.8));
-        }
-
-        /* Alvo físico real que acompanha a ponta da seta */
-        .hardware-touch-target {
-            position: absolute;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            border: 2px dashed rgba(255, 59, 47, 0.6);
-            background: rgba(255, 59, 47, 0.15);
-            z-index: 98;
-            transform: translate(-50%, -50%);
-            cursor: pointer;
-            touch-action: none;
-        }
-
-        .hardware-touch-target.active-tap {
-            background: rgba(45, 212, 191, 0.5);
-            border-color: #2dd4bf;
-        }
-
-        .touch-dpad-box {
-            position: absolute;
-            top: 40px;
-            left: 20px;
-            width: 140px;
-            height: 140px;
-            background: rgba(0, 0, 0, 0.65);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            border-radius: 10px;
-            z-index: 95;
-            display: none;
-            touch-action: none;
-            user-select: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-        }
-
-        .touch-dpad-box.active { display: block; }
-        .touch-dpad-box.oculto { opacity: 0.15 !important; }
-        .touch-dpad-box.bloqueado { border-color: rgba(239, 68, 68, 0.6); }
-
-        .dpad-toolbar {
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            display: grid;
-            grid-template-columns: repeat(2, 18px);
-            gap: 4px;
-            z-index: 100;
-        }
-
-        .tool-btn {
-            width: 18px;
-            height: 18px;
-            background: rgba(255,255,255,0.12);
-            border: 1px solid rgba(255,255,255,0.25);
-            border-radius: 3px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 10px;
-        }
-        .tool-btn.active { background: #ff3b2f; }
-
-        .dpad-cross {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            pointer-events: none;
-        }
-
-        .dpad-wing {
-            position: absolute;
-            background: #ffffff;
-            border-radius: 4px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.8);
-            pointer-events: auto;
-            cursor: pointer;
-        }
-
-        .dpad-wing:active { background: #ff3b2f !important; }
-
-        .wing-up { width: 34px; height: 38px; top: 12px; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
-        .wing-down { width: 34px; height: 38px; bottom: 12px; clip-path: polygon(0% 0%, 100% 0%, 50% 100%); }
-        .wing-left { width: 38px; height: 34px; left: 12px; clip-path: polygon(100% 0%, 100% 100%, 0% 50%); }
-        .wing-right { width: 38px; height: 34px; right: 12px; clip-path: polygon(0% 0%, 100% 50%, 0% 100%); }
-
         /* Fliperama / Arcade Controls */
         .arcade-controller-panel {
             background: #090a0d;
@@ -1403,55 +1300,18 @@
             <button class="btn-pill-dark">FullHD / HD</button>
             <div class="player-top-icons">
                 <i data-lucide="share-2" style="width:16px; cursor:pointer;" onclick="navigator.clipboard.writeText(window.location.href); alert('Link copiado!');"></i>
-                
-                <!-- Ícone circulado em roxo: Alterna entre Cursor Virtual e D-Pad Modular -->
-                <i data-lucide="layers" id="btnAlternarControle" style="width:18px; cursor:pointer; color:#ff3b2f;" onclick="alternarModoControle()"></i>
-                
+                <i data-lucide="layers" style="width:16px; cursor:pointer;"></i>
                 <i data-lucide="users" style="width:16px; cursor:pointer;"></i>
                 <i data-lucide="alert-circle" style="width:16px; cursor:pointer;"></i>
             </div>
         </div>
 
-        <!-- Tela do Jogo / Player Iframe com Cursor e D-Pad Embutidos -->
+        <!-- Tela do Jogo / Player Iframe -->
         <div class="game-screen-area" id="screenAreaBox">
             <button class="big-play-btn" id="btnBigPlay" onclick="iniciarJogoIframe()">
                 <i data-lucide="play" style="fill: #fff; margin-left: 4px;"></i>
             </button>
-            
             <iframe id="gameScreenIframe" src="" allowfullscreen></iframe>
-
-            <!-- Alvo de Toque Físico Real -->
-            <div class="hardware-touch-target" id="touchTarget" onclick="executarToqueRealNoIframe(event)" ontouchstart="executarToqueRealNoIframe(event)"></div>
-
-            <!-- 1. Cursor Virtual (Apontado pela Seta Vermelha) -->
-            <svg class="virtual-cursor" id="virtualCursor" viewBox="0 0 24 24" fill="none">
-                <path d="M4 3L11 21L14.5 13.5L22 10L4 3Z" fill="#ffffff" stroke="#000000" stroke-width="2" stroke-linejoin="round"/>
-            </svg>
-
-            <!-- 2. D-Pad Modular com Toolbar (Apontado pela Seta Roxa e Círculo Vermelho) -->
-            <div class="touch-dpad-box" id="touchDpad">
-                <div class="dpad-toolbar">
-                    <button class="tool-btn" id="btnLock" onclick="trancarDpad()"><i data-lucide="lock" style="width:11px;"></i></button>
-                    <button class="tool-btn" onclick="alterarTamanhoDpad()"><i data-lucide="edit" style="width:11px;"></i></button>
-                    <button class="tool-btn" id="btnEye" onclick="ocultarDpad()"><i data-lucide="eye" style="width:11px;"></i></button>
-                    <button class="tool-btn" onclick="fecharDpad()"><i data-lucide="trash-2" style="width:11px;"></i></button>
-                </div>
-
-                <div class="dpad-cross">
-                    <div class="dpad-wing wing-up" 
-                         onmousedown="pressionarDirecao('ArrowUp', event)" onmouseup="soltarDirecao('ArrowUp', event)"
-                         ontouchstart="pressionarDirecao('ArrowUp', event)" ontouchend="soltarDirecao('ArrowUp', event)"></div>
-                    <div class="dpad-wing wing-down" 
-                         onmousedown="pressionarDirecao('ArrowDown', event)" onmouseup="soltarDirecao('ArrowDown', event)"
-                         ontouchstart="pressionarDirecao('ArrowDown', event)" ontouchend="soltarDirecao('ArrowDown', event)"></div>
-                    <div class="dpad-wing wing-left" 
-                         onmousedown="pressionarDirecao('ArrowLeft', event)" onmouseup="soltarDirecao('ArrowLeft', event)"
-                         ontouchstart="pressionarDirecao('ArrowLeft', event)" ontouchend="soltarDirecao('ArrowLeft', event)"></div>
-                    <div class="dpad-wing wing-right" 
-                         onmousedown="pressionarDirecao('ArrowRight', event)" onmouseup="soltarDirecao('ArrowRight', event)"
-                         ontouchstart="pressionarDirecao('ArrowRight', event)" ontouchend="soltarDirecao('ArrowRight', event)"></div>
-                </div>
-            </div>
         </div>
 
         <div class="game-mode-bar">
@@ -1473,16 +1333,14 @@
             </div>
 
             <div class="arcade-buttons-grid">
-                <!-- A1 (Verde): Dá o clique na posição do Cursor Virtual -->
-                <button class="arc-btn arc-green" onclick="clicarComCursorVirtual(event)">A1</button>
-                <!-- A2 (Azul): Fecha/Oculta o Cursor Virtual -->
-                <button class="arc-btn arc-blue" onclick="desligarCursor(event)">A2</button>
-                <button class="arc-btn arc-black" onmousedown="simularTecla('KeyC', event)" ontouchstart="simularTecla('KeyC', event)">A3</button>
-                <button class="arc-btn arc-black" onmousedown="simularTecla('ShiftLeft', event)" ontouchstart="simularTecla('ShiftLeft', event)">S1</button>
-                <button class="arc-btn arc-red" onmousedown="simularTecla('Space', event)" ontouchstart="simularTecla('Space', event)">A4</button>
-                <button class="arc-btn arc-yellow" onmousedown="simularTecla('KeyA', event)" ontouchstart="simularTecla('KeyA', event)">A5</button>
-                <button class="arc-btn arc-black" onmousedown="simularTecla('KeyS', event)" ontouchstart="simularTecla('KeyS', event)">A6</button>
-                <button class="arc-btn arc-black" onmousedown="simularTecla('Enter', event)" ontouchstart="simularTecla('Enter', event)">S2</button>
+                <button class="arc-btn arc-green" onclick="simularTecla('KeyZ')">A1</button>
+                <button class="arc-btn arc-blue" onclick="simularTecla('KeyX')">A2</button>
+                <button class="arc-btn arc-black" onclick="simularTecla('KeyC')">A3</button>
+                <button class="arc-btn arc-black" onclick="simularTecla('ShiftLeft')">S1</button>
+                <button class="arc-btn arc-red" onclick="simularTecla('Space')">A4</button>
+                <button class="arc-btn arc-yellow" onclick="simularTecla('KeyA')">A5</button>
+                <button class="arc-btn arc-black" onclick="simularTecla('KeyS')">A6</button>
+                <button class="arc-btn arc-black" onclick="simularTecla('Enter')">S2</button>
             </div>
         </div>
 
@@ -1646,317 +1504,20 @@
             count.innerText = parseInt(count.innerText) + val;
         }
 
-        // =================================================================
-        // SISTEMA DE CONTROLES VIRTUAIS (ARCADE BRIDGE COM FOCO E EVENTOS)
-        // =================================================================
-
-        // Garante que o jogo não perca o foco do teclado ao tocar nos botões
-        function manterFocoNoJogo() {
-            const iframe = document.getElementById('gameScreenIframe');
-            if (iframe && iframe.contentWindow) {
-                try {
-                    iframe.contentWindow.focus();
-                } catch (e) {}
-            }
-        }
-
-        // Tabela de keyCodes clássicos (necessário para jogos antigos em JS)
-        const KEY_CODES = {
-            'ArrowUp': 38,
-            'ArrowDown': 40,
-            'ArrowLeft': 37,
-            'ArrowRight': 39,
-            'KeyZ': 90,
-            'KeyX': 88,
-            'KeyC': 67,
-            'ShiftLeft': 16,
-            'Space': 32,
-            'KeyA': 65,
-            'KeyS': 83,
-            'Enter': 13
-        };
-
-        // Dispara o evento de tecla no navegador e tenta enviar para o iframe
-        function dispararEventoTecla(tipo, code) {
-            const keyCode = KEY_CODES[code] || 0;
-            const iframe = document.getElementById('gameScreenIframe');
-
-            const evento = new KeyboardEvent(tipo, {
-                key: code.replace('Key', '').replace('Arrow', ''),
-                code: code,
-                keyCode: keyCode,
-                which: keyCode,
-                bubbles: true,
-                cancelable: true,
-                view: window
-            });
-
-            // Dispara na janela principal
-            window.dispatchEvent(evento);
-            document.dispatchEvent(evento);
-
-            // Tenta injetar no iframe diretamente ou via postMessage (Cross-Origin)
-            if (iframe && iframe.contentWindow) {
-                try {
-                    iframe.contentWindow.dispatchEvent(evento);
-                    iframe.contentDocument.dispatchEvent(evento);
-                } catch (err) {
-                    iframe.contentWindow.postMessage({
-                        type: tipo,
-                        button: code,
-                        keyCode: keyCode
-                    }, "*");
-                }
-            }
-        }
-
-        // Função dos botões de ação (A1 a S2)
-        function simularTecla(codigo, evt) {
-            if (evt) evt.preventDefault();
-
-            dispararEventoTecla('keydown', codigo);
-            manterFocoNoJogo();
-
+        function simularTecla(codigo) {
+            window.dispatchEvent(new KeyboardEvent('keydown', { code: codigo, key: codigo }));
             setTimeout(() => {
-                dispararEventoTecla('keyup', codigo);
-                manterFocoNoJogo();
-            }, 120);
+                window.dispatchEvent(new KeyboardEvent('keyup', { code: codigo, key: codigo }));
+            }, 100);
         }
 
-        // Joystick analógico convertido para Setas do Teclado (D-Pad)
+        // Joystick Touch para Celular
         const thumb = document.getElementById('joystickThumb');
         const base = document.getElementById('joystickBase');
         let drag = false;
-        let direcaoAtual = null;
 
-        function processarDirecao(dx, dy) {
-            let novaDirecao = null;
-            const sensibilidade = 12;
-
-            if (Math.abs(dx) > Math.abs(dy)) {
-                if (dx > sensibilidade) novaDirecao = 'ArrowRight';
-                else if (dx < -sensibilidade) novaDirecao = 'ArrowLeft';
-            } else {
-                if (dy > sensibilidade) novaDirecao = 'ArrowDown';
-                else if (dy < -sensibilidade) novaDirecao = 'ArrowUp';
-            }
-
-            if (novaDirecao !== direcaoAtual) {
-                if (direcaoAtual) {
-                    dispararEventoTecla('keyup', direcaoAtual);
-                }
-                if (novaDirecao) {
-                    dispararEventoTecla('keydown', novaDirecao);
-                    manterFocoNoJogo();
-                }
-                direcaoAtual = novaDirecao;
-            }
-        }
-
-        function soltarJoystick() {
-            if (!drag) return;
-            drag = false;
-            if (thumb) thumb.style.transform = 'translate(0,0)';
-            if (direcaoAtual) {
-                dispararEventoTecla('keyup', direcaoAtual);
-                direcaoAtual = null;
-            }
-            manterFocoNoJogo();
-        }
-
-        // =================================================================
-        // LÓGICA DO CURSOR VIRTUAL E D-PAD MODULAR DENTRO DO CONTAINER
-        // =================================================================
-
-        let modoControle = 'cursor'; // 'cursor' ou 'dpad'
-        let cursorX = 80;
-        let cursorY = 80;
-        let cursorVisivel = true;
-        let dpadTrancado = false;
-        let dpadOculto = false;
-        let dpadTamanhoIndex = 0;
-        const tamanhosDpad = [140, 175, 115];
-
-        // Alterna entre Cursor e D-Pad ao clicar no ícone roxo
-        function alternarModoControle() {
-            const dpad = document.getElementById('touchDpad');
-            const cursor = document.getElementById('virtualCursor');
-
-            if (modoControle === 'cursor') {
-                modoControle = 'dpad';
-                cursor.style.display = 'none';
-                dpad.classList.add('active');
-            } else {
-                modoControle = 'cursor';
-                dpad.classList.remove('active');
-                if (cursorVisivel) cursor.style.display = 'block';
-            }
-            lucide.createIcons();
-        }
-
-        // Move o cursor e a mira de toque físico simultaneamente
-        function loopMovimentoCursor() {
-            if (drag && modoControle === 'cursor') {
-                const screen = document.getElementById('screenAreaBox');
-                if (screen) {
-                    cursorX = Math.max(10, Math.min(screen.clientWidth - 15, cursorX + joystickVelX));
-                    cursorY = Math.max(10, Math.min(screen.clientHeight - 15, cursorY + joystickVelY));
-                    
-                    const cursor = document.getElementById('virtualCursor');
-                    const target = document.getElementById('touchTarget');
-
-                    if (cursor) cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
-                    if (target) {
-                        target.style.left = cursorX + 'px';
-                        target.style.top = cursorY + 'px';
-                    }
-                }
-            }
-            if (drag) {
-                loopJoystickId = requestAnimationFrame(loopMovimentoCursor);
-            }
-        }
-
-        // Fura a camada de proteção do navegador e entrega o toque real ao iframe
-        function executarToqueRealNoIframe(e) {
-            const target = document.getElementById('touchTarget');
-            const iframe = document.getElementById('gameScreenIframe');
-
-            if (target) {
-                target.classList.add('active-tap');
-                target.style.pointerEvents = 'none'; // Desliga a barreira no milissegundo exato
-            }
-
-            if (iframe) {
-                iframe.focus();
-                try {
-                    iframe.contentWindow.focus();
-                } catch(err){}
-            }
-
-            // Teclas universais para botões de menu (PLAY, START, OK)
-            dispararEventoTecla('keydown', 'Enter');
-            dispararEventoTecla('keydown', 'Space');
-
-            setTimeout(() => {
-                dispararEventoTecla('keyup', 'Enter');
-                dispararEventoTecla('keyup', 'Space');
-                if (target) {
-                    target.classList.remove('active-tap');
-                    target.style.pointerEvents = 'auto'; // Religa o alvo
-                }
-            }, 120);
-        }
-
-        // Botão A1 (Verde): Aciona o toque físico na posição da mira
-        function clicarComCursorVirtual(e) {
-            if (e) e.preventDefault();
-
-            const cursor = document.getElementById('virtualCursor');
-            if (cursor) {
-                cursor.style.transform = `translate(${cursorX}px, ${cursorY}px) scale(0.75)`;
-                setTimeout(() => {
-                    cursor.style.transform = `translate(${cursorX}px, ${cursorY}px) scale(1)`;
-                }, 100);
-            }
-
-            executarToqueRealNoIframe(e);
-        }
-
-        // Botão A2 (Azul): Fecha/Oculta o cursor virtual
-        function desligarCursor(e) {
-            if (e) e.preventDefault();
-            cursorVisivel = !cursorVisivel;
-            document.getElementById('virtualCursor').style.display = cursorVisivel ? 'block' : 'none';
-        }
-
-        // Toolbar do D-Pad:
-        function trancarDpad() {
-            dpadTrancado = !dpadTrancado;
-            const dpad = document.getElementById('touchDpad');
-            const btn = document.getElementById('btnLock');
-            dpad.classList.toggle('bloqueado', dpadTrancado);
-            btn.classList.toggle('active', dpadTrancado);
-        }
-
-        function alterarTamanhoDpad() {
-            if (dpadTrancado) return;
-            dpadTamanhoIndex = (dpadTamanhoIndex + 1) % tamanhosDpad.length;
-            const size = tamanhosDpad[dpadTamanhoIndex];
-            const dpad = document.getElementById('touchDpad');
-            dpad.style.width = size + 'px';
-            dpad.style.height = size + 'px';
-        }
-
-        function ocultarDpad() {
-            dpadOculto = !dpadOculto;
-            const dpad = document.getElementById('touchDpad');
-            const btn = document.getElementById('btnEye');
-            dpad.classList.toggle('oculto', dpadOculto);
-            btn.classList.toggle('active', dpadOculto);
-        }
-
-        function fecharDpad() {
-            alternarModoControle();
-        }
-
-        function pressionarDirecao(direcao, e) {
-            if (e) e.preventDefault();
-            manterFocoNoJogo();
-            dispararEventoTecla('keydown', direcao);
-        }
-
-        function soltarDirecao(direcao, e) {
-            if (e) e.preventDefault();
-            dispararEventoTecla('keyup', direcao);
-            manterFocoNoJogo();
-        }
-
-        // Arraste do D-Pad pelo Container
-        const dpadElement = document.getElementById('touchDpad');
-        let arrastandoDpad = false;
-        let dpadOffsetX = 0, dpadOffsetY = 0;
-
-        function iniciarArrastoDpad(e) {
-            if (dpadTrancado) return;
-            if (e.target.closest('.tool-btn') || e.target.closest('.dpad-wing')) return;
-            arrastandoDpad = true;
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            const rect = dpadElement.getBoundingClientRect();
-            dpadOffsetX = clientX - rect.left;
-            dpadOffsetY = clientY - rect.top;
-        }
-
-        function moverDpad(e) {
-            if (!arrastandoDpad) return;
-            const screen = document.getElementById('screenAreaBox');
-            const screenRect = screen.getBoundingClientRect();
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-            let novoX = clientX - screenRect.left - dpadOffsetX;
-            let novoY = clientY - screenRect.top - dpadOffsetY;
-
-            dpadElement.style.left = Math.max(5, Math.min(screenRect.width - dpadElement.offsetWidth - 5, novoX)) + 'px';
-            dpadElement.style.top = Math.max(5, Math.min(screenRect.height - dpadElement.offsetHeight - 5, novoY)) + 'px';
-        }
-
-        if (dpadElement) {
-            dpadElement.addEventListener('mousedown', iniciarArrastoDpad);
-            dpadElement.addEventListener('touchstart', iniciarArrastoDpad, { passive: false });
-            window.addEventListener('mouseup', () => arrastandoDpad = false);
-            window.addEventListener('touchend', () => arrastandoDpad = false);
-            window.addEventListener('mousemove', moverDpad);
-            window.addEventListener('touchmove', moverDpad, { passive: false });
-        }
-
-        // L
-
-        function moverJoystick(e) {
+        function handleJoystick(e) {
             if (!drag || !base || !thumb) return;
-            if (e.cancelable) e.preventDefault();
-
             const rect = base.getBoundingClientRect();
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
             const clientY = e.touches ? e.touches[0].clientY : e.clientY;
@@ -1967,34 +1528,15 @@
             const angle = Math.atan2(dy, dx);
 
             thumb.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px)`;
-
-            joystickVelX = (Math.cos(angle) * (dist / 35)) * 4.5;
-            joystickVelY = (Math.sin(angle) * (dist / 35)) * 4.5;
-
-            if (modoControle === 'dpad') {
-                processarDirecao(dx, dy);
-            }
         }
 
-        if (thumb && base) {
-            thumb.addEventListener('mousedown', (e) => { e.preventDefault(); drag = true; loopMovimentoCursor(); });
-            thumb.addEventListener('touchstart', (e) => { e.preventDefault(); drag = true; loopMovimentoCursor(); }, { passive: false });
-            
-            window.addEventListener('mouseup', () => { 
-                drag = false; 
-                thumb.style.transform = 'translate(0,0)'; 
-                cancelAnimationFrame(loopJoystickId);
-                soltarJoystick();
-            });
-            window.addEventListener('touchend', () => { 
-                drag = false; 
-                thumb.style.transform = 'translate(0,0)'; 
-                cancelAnimationFrame(loopJoystickId);
-                soltarJoystick();
-            });
-
-            window.addEventListener('mousemove', moverJoystick);
-            window.addEventListener('touchmove', moverJoystick, { passive: false });
+        if(thumb && base) {
+            thumb.addEventListener('mousedown', () => drag = true);
+            thumb.addEventListener('touchstart', () => drag = true);
+            window.addEventListener('mouseup', () => { drag = false; thumb.style.transform = 'translate(0,0)'; });
+            window.addEventListener('touchend', () => { drag = false; thumb.style.transform = 'translate(0,0)'; });
+            window.addEventListener('mousemove', handleJoystick);
+            window.addEventListener('touchmove', handleJoystick);
         }
 
         // FIREBASE & DATABASE
