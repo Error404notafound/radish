@@ -287,7 +287,7 @@
             margin-top: 2px;
         }
 
-        /* CARDS DO TOP 5 (COM NÚMERO GIGANTE NO FUNDO) */
+        /* CARDS DO TOP 5 */
         .top-card {
             position: relative;
             flex: 0 0 160px;
@@ -322,9 +322,7 @@
             flex-direction: column;
         }
 
-        .player-modal.active {
-            display: flex;
-        }
+        .player-modal.active { display: flex; }
 
         .player-bar {
             display: flex;
@@ -376,15 +374,13 @@
             border: none;
         }
 
-        .nav-item.active {
-            color: var(--primary);
-        }
+        .nav-item.active { color: var(--primary); }
 
-        /* MODAL DE ENVIO DE JOGOS */
+        /* MODAIS PADRÕES */
         .form-modal {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.85);
             z-index: 999;
             display: none;
             align-items: center;
@@ -431,11 +427,7 @@
             cursor: pointer;
         }
 
-        /* ===================================================
-           NOVOS ESTILOS: DRAWER LATERAL & PÁGINA DE CADASTRO
-        =================================================== */
-        
-        /* Drawer Menu Lateral */
+        /* DRAWER MENU LATERAL */
         .side-menu {
             position: fixed;
             top: 0;
@@ -451,9 +443,7 @@
             box-shadow: 10px 0 30px rgba(0,0,0,0.8);
         }
 
-        .side-menu.active {
-            left: 0;
-        }
+        .side-menu.active { left: 0; }
 
         .side-menu-overlay {
             position: fixed;
@@ -464,15 +454,14 @@
             backdrop-filter: blur(3px);
         }
 
-        .side-menu-overlay.active {
-            display: block;
-        }
+        .side-menu-overlay.active { display: block; }
 
         .menu-top-actions {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 25px;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
         }
 
         .auth-actions a {
@@ -481,12 +470,7 @@
             font-size: 15px;
             font-weight: 700;
             color: #fff;
-            margin-bottom: 8px;
-        }
-
-        .auth-actions a.login-link {
-            color: #ffffff;
-            font-size: 15px;
+            margin-bottom: 6px;
         }
 
         .close-menu-btn {
@@ -504,9 +488,7 @@
             margin: 20px 0 10px 0;
         }
 
-        .menu-links {
-            list-style: none;
-        }
+        .menu-links { list-style: none; }
 
         .menu-links li a {
             display: flex;
@@ -517,7 +499,6 @@
             font-size: 14px;
             font-weight: 500;
             padding: 9px 0;
-            transition: color 0.2s;
         }
 
         .menu-links li a.active {
@@ -525,159 +506,318 @@
             font-weight: 700;
         }
 
-        .menu-links li a i {
-            width: 18px;
-            height: 18px;
+        .menu-links li a i { width: 18px; height: 18px; }
+
+        /* HEADER USUÁRIO LOGADO NO MENU HAMBÚRGUER */
+        .user-profile-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            user-select: none;
         }
 
-        /* Página de Cadastro (View) */
-        .auth-page {
-            position: fixed;
-            inset: 0;
-            background: var(--bg-body);
-            z-index: 1100;
-            overflow-y: auto;
-            padding: 70px 20px 30px 20px;
-            display: none;
-        }
-
-        .auth-page.active {
-            display: block;
-        }
-
-        .auth-avatar-box {
-            position: relative;
-            width: 100%;
-            height: 220px;
-            background: #111318;
-            border-radius: var(--radius-lg);
-            margin-bottom: 24px;
+        .user-avatar-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #232730;
+            color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            background-size: cover;
+            background-position: center;
+            border: 2px solid rgba(255,255,255,0.08);
+        }
+
+        .user-greeting {
+            font-size: 12px;
+            color: #8c909e;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .user-name-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            transition: color 0.2s;
+        }
+
+        .user-name-title.active {
+            color: var(--primary);
+        }
+
+        /* MODAL FLUTUANTE (DROPDOWN USUÁRIO) */
+        .user-dropdown-card {
+            position: absolute;
+            top: 60px;
+            left: 0;
+            width: 175px;
+            background: #12141a;
             border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 8px 0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+            z-index: 100;
+            display: none;
+        }
+
+        .user-dropdown-card.active { display: block; }
+
+        .dropdown-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: background 0.15s;
+        }
+
+        .dropdown-link:hover { background: rgba(255,255,255,0.05); }
+        .dropdown-link.disconnect { color: #ef4444; }
+
+        /* PÁGINAS EM TELA CHEIA (VIEWS) */
+        .app-view {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-body);
+            z-index: 1300;
+            overflow-y: auto;
+            padding: 65px 16px 85px 16px;
+            display: none;
+        }
+
+        .app-view.active { display: block; }
+
+        .view-header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 55px;
+            background: rgba(6, 7, 9, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            border-bottom: 1px solid var(--border);
+            z-index: 10;
+        }
+
+        .breadcrumbs {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+        }
+
+        .breadcrumbs span { color: #fff; }
+
+        /* ESTILOS DA TELA DE PERFIL (X AZUL) */
+        .profile-banner {
+            width: 100%;
+            height: 140px;
+            background: #111317;
+            border-radius: var(--radius-lg);
+            position: relative;
+            margin-bottom: 50px;
+            border: 1px solid var(--border);
+        }
+
+        .profile-pic-large {
+            position: absolute;
+            left: 20px;
+            bottom: -35px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #1c1f26;
+            border: 4px solid var(--bg-body);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 800;
             background-size: cover;
             background-position: center;
         }
 
-        .upload-avatar-btn {
-            position: absolute;
-            left: 16px;
-            bottom: -18px;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: #2dd4bf;
-            border: 3px solid var(--bg-body);
-            color: #000;
+        .profile-username {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .profile-date {
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .profile-stats-row {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 25px;
+        }
+
+        .stat-box { text-align: left; }
+        .stat-num { font-size: 18px; font-weight: 800; }
+        .stat-label { font-size: 11px; color: var(--text-secondary); }
+
+        .btn-edit-pencil {
+            margin-left: auto;
+            background: #181b22;
+            border: 1px solid var(--border);
+            color: #fff;
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(45, 212, 191, 0.3);
-            z-index: 5;
         }
 
-        .input-group {
-            margin-bottom: 14px;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 12px;
-            color: #8e8e9f;
-            margin-bottom: 6px;
-            font-weight: 500;
-        }
-
-        .input-wrapper {
-            position: relative;
+        /* NAVEGAÇÃO DE ABAS */
+        .tabs-nav-scroll {
             display: flex;
-            align-items: center;
+            gap: 18px;
+            overflow-x: auto;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
         }
 
-        .input-wrapper input {
-            width: 100%;
-            background: #12141a;
-            border: 1px solid var(--border);
-            padding: 14px 16px;
-            border-radius: var(--radius-md);
-            color: #fff;
-            outline: none;
-            font-size: 14px;
-        }
+        .tabs-nav-scroll::-webkit-scrollbar { display: none; }
 
-        .input-wrapper .toggle-pwd {
-            position: absolute;
-            right: 14px;
+        .tab-btn {
             background: none;
             border: none;
-            color: #64748b;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 10px 0;
+            white-space: nowrap;
             cursor: pointer;
+            position: relative;
         }
 
-        .btn-register-main {
+        .tab-btn.active {
+            color: var(--primary);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        .tab-content-panel { display: none; }
+        .tab-content-panel.active { display: block; }
+
+        .empty-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 10px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .empty-placeholder i { width: 38px; height: 38px; margin-bottom: 12px; opacity: 0.5; }
+        .empty-placeholder h4 { color: #fff; font-size: 14px; margin-bottom: 4px; }
+        .empty-placeholder p { font-size: 12px; max-width: 250px; }
+
+        /* TELA DE NOTIFICAÇÕES (X VERDE) */
+        .notif-title { font-size: 22px; font-weight: 800; margin-bottom: 20px; }
+        .notif-section-label { font-size: 13px; font-weight: 700; margin: 18px 0 8px 0; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+        .notif-empty { font-size: 12px; color: var(--text-secondary); margin-bottom: 16px; }
+
+        /* TELA DE DEFINIÇÕES (X ROXO) */
+        .def-group-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .def-group-sub {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .switch-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .switch-label h5 { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+        .switch-label p { font-size: 11px; color: var(--text-secondary); max-width: 260px; }
+
+        /* Toggle Switch Estilo iOS */
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            inset: 0;
+            background: #262933;
+            border-radius: 24px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .toggle-switch input:checked + .slider { background: var(--primary); }
+        .toggle-switch input:checked + .slider:before { transform: translateX(20px); }
+
+        .btn-save-def {
             width: 100%;
             background: var(--primary);
             color: #fff;
             border: none;
-            padding: 14px;
+            padding: 13px;
             border-radius: var(--radius-md);
             font-weight: 700;
             font-size: 14px;
-            margin-top: 10px;
+            margin-top: 20px;
             cursor: pointer;
-        }
-
-        .btn-discord {
-            width: 100%;
-            background: #5865f2;
-            color: #fff;
-            border: none;
-            padding: 14px;
-            border-radius: var(--radius-md);
-            font-weight: 700;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 10px;
-            cursor: pointer;
-        }
-
-        /* Fake Captcha Estilizado */
-        .captcha-box {
-            margin-top: 16px;
-            background: #fff;
-            border-radius: 4px;
-            padding: 10px 14px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            color: #000;
-        }
-
-        .captcha-box label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .captcha-box input {
-            width: 22px;
-            height: 22px;
-            cursor: pointer;
-        }
-
-        .captcha-logo {
-            text-align: right;
-            font-size: 9px;
-            color: #555;
-            font-weight: 700;
         }
     </style>
 
@@ -693,10 +833,37 @@
     <!-- DRAWER / MENU LATERAL -->
     <aside class="side-menu" id="sideMenu">
         <div class="menu-top-actions">
-            <div class="auth-actions">
+            <!-- ESTADO 1: DESLOGADO -->
+            <div class="auth-actions" id="authActionsDeslogado">
                 <a href="javascript:void(0)" onclick="abrirCadastro()">Registrar</a>
-                <a href="javascript:void(0)" class="login-link" onclick="alert('Tela de Login em breve!')">Conecte-se</a>
+                <a href="javascript:void(0)" style="color:#8e8e9f;" onclick="fazerLoginSimulado()">Conecte-se</a>
             </div>
+
+            <!-- ESTADO 2: LOGADO (CONFORME OS PRINTS) -->
+            <div class="user-profile-header" id="authActionsLogado" style="display:none;" onclick="toggleUserDropdown(event)">
+                <div class="user-avatar-circle" id="menuUserAvatar">E</div>
+                <div>
+                    <div class="user-greeting">Olá 👋,</div>
+                    <div class="user-name-title" id="menuUserName">Error404pagenotafo</div>
+                </div>
+
+                <!-- MODAL DROPDOWN DO USUÁRIO (APONTADO PELA SETA AZUL, VERDE E ROXA) -->
+                <div class="user-dropdown-card" id="userDropdownMenu">
+                    <a href="javascript:void(0)" class="dropdown-link" onclick="abrirView('viewPerfil')">
+                        <i data-lucide="user" style="width:16px; height:16px;"></i> Meu perfil
+                    </a>
+                    <a href="javascript:void(0)" class="dropdown-link" onclick="abrirView('viewNotificacoes')">
+                        <i data-lucide="bell" style="width:16px; height:16px;"></i> Notificações
+                    </a>
+                    <a href="javascript:void(0)" class="dropdown-link" onclick="abrirView('viewDefinicoes')">
+                        <i data-lucide="settings" style="width:16px; height:16px;"></i> Definições
+                    </a>
+                    <a href="javascript:void(0)" class="dropdown-link disconnect" onclick="desconectarUsuario()">
+                        <i data-lucide="log-out" style="width:16px; height:16px;"></i> Desconectar
+                    </a>
+                </div>
+            </div>
+
             <button class="close-menu-btn" onclick="toggleSideMenu()">
                 <i data-lucide="x"></i>
             </button>
@@ -713,7 +880,7 @@
         <ul class="menu-links">
             <li><a href="#"><i data-lucide="grid"></i> Categorias</a></li>
             <li><a href="#"><i data-lucide="trending-up"></i> Tendências</a></li>
-            <li><a href="#"><i data-lucide="bell"></i> Notificações</a></li>
+            <li><a href="javascript:void(0)" onclick="abrirView('viewNotificacoes')"><i data-lucide="bell"></i> Notificações</a></li>
             <li><a href="#"><i data-lucide="dices"></i> Surpreenda-me</a></li>
             <li><a href="#"><i data-lucide="gem"></i> Contribuição</a></li>
             <li><a href="#"><i data-lucide="calendar"></i> Calendários</a></li>
@@ -722,152 +889,234 @@
             <li><a href="#"><i data-lucide="history"></i> Históricos</a></li>
             <li><a href="#"><i data-lucide="archive"></i> Coleções</a></li>
         </ul>
-
-        <div class="menu-section-label">Redes sociais</div>
-        <ul class="menu-links">
-            <li><a href="https://discord.com" target="_blank"><i data-lucide="message-circle"></i> Discord</a></li>
-        </ul>
-
-        <div class="menu-section-label">Parceiros</div>
-        <ul class="menu-links">
-            <li><a href="#"><i data-lucide="trophy"></i> ANreyalP</a></li>
-        </ul>
-
-        <div class="menu-section-label">Páginas</div>
-        <ul class="menu-links">
-            <li><a href="#"><i data-lucide="copyright"></i> DMCA</a></li>
-            <li><a href="#"><i data-lucide="shield"></i> Política de Privacidade</a></li>
-            <li><a href="#"><i data-lucide="file-text"></i> Termos da Contribuição</a></li>
-            <li><a href="#"><i data-lucide="alert-circle"></i> Regras da Comunidade</a></li>
-        </ul>
     </aside>
 
-    <!-- PÁGINA / TELA DE CADASTRO -->
-    <div class="auth-page" id="authPage">
-        <header style="position: fixed; top: 0; left: 0; right: 0; background: var(--bg-body);">
-            <button class="icon-btn" onclick="fecharCadastro()">
-                <i data-lucide="arrow-left"></i>
-            </button>
-            <div class="brand-logo">
-                <h1>RADISH <span>GAMES</span></h1>
-                <small>ラディッシュ ゲーム</small>
-            </div>
-            <button class="icon-btn" style="opacity: 0;">
-                <i data-lucide="search"></i>
-            </button>
-        </header>
-
-        <!-- Container do Avatar/Banner com botão verde de URL -->
-        <div class="auth-avatar-box" id="avatarPreviewBox">
-            <button class="upload-avatar-btn" onclick="toggleModal('modalAvatarUrl')">
-                <i data-lucide="upload" style="width: 20px; height: 20px;"></i>
-            </button>
+    <!-- PÁGINA 1: MEU PERFIL (MARCAÇÃO X AZUL) -->
+    <div class="app-view" id="viewPerfil">
+        <div class="view-header">
+            <button class="icon-btn" onclick="fecharView('viewPerfil')"><i data-lucide="arrow-left"></i></button>
+            <div class="brand-logo"><h1>RADISH <span>GAMES</span></h1></div>
+            <button class="icon-btn" style="opacity:0;"><i data-lucide="search"></i></button>
         </div>
 
-        <form onsubmit="event.preventDefault(); alert('Conta criada com sucesso!'); fecharCadastro();">
-            <div class="input-group">
-                <label>Nome do usuário</label>
-                <div class="input-wrapper">
-                    <input type="text" placeholder="Nome do usuário" required>
-                </div>
-            </div>
+        <div class="breadcrumbs">home &mdash; <span id="profileBreadcrumbUser">Error404pagenotafo</span></div>
 
-            <div class="input-group">
-                <label>Email</label>
-                <div class="input-wrapper">
-                    <input type="email" placeholder="Email" required>
-                </div>
-            </div>
+        <div class="profile-banner">
+            <div class="profile-pic-large" id="profilePageAvatar">E</div>
+        </div>
 
-            <div class="input-group">
-                <label>Senha</label>
-                <div class="input-wrapper">
-                    <input type="password" id="pass1" placeholder="Senha" required>
-                    <button type="button" class="toggle-pwd" onclick="togglePasswordVisibility('pass1', this)">
-                        <i data-lucide="eye-off"></i>
-                    </button>
-                </div>
-            </div>
+        <h2 class="profile-username" id="profilePageName">Error404pagenotafo</h2>
+        <div class="profile-date"><i data-lucide="calendar" style="width:14px; height:14px;"></i> 19/04/2026</div>
 
-            <div class="input-group">
-                <label>Confirmar Senha</label>
-                <div class="input-wrapper">
-                    <input type="password" id="pass2" placeholder="Confirmar Senha" required>
-                    <button type="button" class="toggle-pwd" onclick="togglePasswordVisibility('pass2', this)">
-                        <i data-lucide="eye-off"></i>
-                    </button>
-                </div>
-            </div>
+        <div class="profile-stats-row">
+            <div class="stat-box"><div class="stat-num">0</div><div class="stat-label">Seguidores</div></div>
+            <div class="stat-box"><div class="stat-num">0</div><div class="stat-label">Seguindo</div></div>
+            <div class="stat-box"><div class="stat-num">0</div><div class="stat-label">XP</div></div>
+            <button class="btn-edit-pencil" onclick="abrirView('viewDefinicoes')"><i data-lucide="edit-3" style="width:16px;"></i></button>
+        </div>
 
-            <button type="submit" class="btn-register-main">Criar conta</button>
-            <button type="button" class="btn-discord">
-                <i data-lucide="message-square"></i> Cadastrar com Discord
+        <div class="tabs-nav-scroll">
+            <button class="tab-btn active" onclick="trocarAba(event, 'tabGostei')">Marcados com "Gostei"</button>
+            <button class="tab-btn" onclick="trocarAba(event, 'tabXP')">Temporada XP</button>
+            <button class="tab-btn" onclick="trocarAba(event, 'tabColecoes')">Coleções</button>
+            <button class="tab-btn" onclick="trocarAba(event, 'tabPublicacoes')">Publicações</button>
+            <button class="tab-btn" onclick="trocarAba(event, 'tabFavoritos')">Favoritos</button>
+            <button class="tab-btn" onclick="trocarAba(event, 'tabSuportes')">Suportes</button>
+        </div>
+
+        <!-- Conteúdos das abas -->
+        <div class="tab-content-panel active" id="tabGostei">
+            <div class="empty-placeholder">
+                <i data-lucide="film"></i>
+                <h4>Nenhum filme curtido</h4>
+                <p>Os filmes marcados com "Gostei" aparecerão aqui.</p>
+            </div>
+        </div>
+
+        <div class="tab-content-panel" id="tabXP">
+            <div style="background:#13151b; padding:16px; border-radius:12px; margin-bottom:14px; border:1px solid var(--border);">
+                <span style="color:var(--primary); font-size:11px; font-weight:800;">1ª TEMPORADA RADISH - JULHO 2026</span>
+                <h2 style="margin:6px 0;">0 XP</h2>
+                <p style="font-size:11px; color:var(--text-secondary);">11 dias restantes &bull; 8.513 participantes</p>
+            </div>
+            <div class="empty-placeholder">
+                <i data-lucide="award"></i>
+                <h4>Nenhum XP acumulado</h4>
+                <p>Jogue e comente para desbloquear badges exclusivos.</p>
+            </div>
+        </div>
+
+        <div class="tab-content-panel" id="tabColecoes">
+            <button class="btn-save-def" style="margin-top:0; margin-bottom:20px; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
+                <i data-lucide="plus" style="width:16px;"></i> Criar coleção
             </button>
+            <div class="empty-placeholder">
+                <i data-lucide="layers"></i>
+                <h4>Você ainda não criou nenhuma coleção</h4>
+            </div>
+        </div>
 
-            <!-- hCaptcha Fake Integrado -->
-            <div class="captcha-box">
-                <label>
-                    <input type="checkbox" required>
-                    <span>Sou humano</span>
-                </label>
-                <div class="captcha-logo">
-                    <span>hCaptcha</span><br>
-                    <small style="color: #999;">Privacidade - Termos</small>
-                </div>
+        <div class="tab-content-panel" id="tabPublicacoes">
+            <div class="empty-placeholder">
+                <i data-lucide="message-square"></i>
+                <h4>Nenhuma publicação na comunidade</h4>
+                <p>Quando este perfil publicar, a atividade aparecerá aqui.</p>
+            </div>
+        </div>
+
+        <div class="tab-content-panel" id="tabFavoritos">
+            <div class="empty-placeholder">
+                <i data-lucide="bookmark"></i>
+                <h4>Nenhum favorito adicionado</h4>
+                <p>Os itens acompanhados por este perfil aparecerão aqui.</p>
+            </div>
+        </div>
+
+        <div class="tab-content-panel" id="tabSuportes">
+            <div class="empty-placeholder">
+                <i data-lucide="life-buoy"></i>
+                <h4>Nenhum ticket encontrado</h4>
+                <p>Veja os últimos atendimentos e a resposta da equipe aqui.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PÁGINA 2: NOTIFICAÇÕES (MARCAÇÃO X VERDE) -->
+    <div class="app-view" id="viewNotificacoes">
+        <div class="view-header">
+            <button class="icon-btn" onclick="fecharView('viewNotificacoes')"><i data-lucide="arrow-left"></i></button>
+            <div class="brand-logo"><h1>RADISH <span>GAMES</span></h1></div>
+            <button class="icon-btn" style="opacity:0;"><i data-lucide="search"></i></button>
+        </div>
+
+        <div class="breadcrumbs">home &mdash; <span>Notificações</span></div>
+        <h2 class="notif-title">Notificações</h2>
+
+        <div class="notif-section-label">Importante</div>
+        <p class="notif-empty">Nenhuma notificação importante no momento.</p>
+
+        <div class="notif-section-label">Mais notificações</div>
+        <p class="notif-empty">Nenhuma outra notificação no momento.</p>
+    </div>
+
+    <!-- PÁGINA 3: DEFINIÇÕES / CONFIGURAÇÕES (MARCAÇÃO X ROXO) -->
+    <div class="app-view" id="viewDefinicoes">
+        <div class="view-header">
+            <button class="icon-btn" onclick="fecharView('viewDefinicoes')"><i data-lucide="arrow-left"></i></button>
+            <div class="brand-logo"><h1>RADISH <span>GAMES</span></h1></div>
+            <button class="icon-btn" style="opacity:0;"><i data-lucide="search"></i></button>
+        </div>
+
+        <div class="tabs-nav-scroll" style="margin-top:10px;">
+            <button class="tab-btn active" onclick="trocarAba(event, 'tabDefPerfil')">Perfil</button>
+            <button class="tab-btn" onclick="trocarAba(event, 'tabDefConta')">Conta</button>
+            <button class="tab-btn" onclick="trocarAba(event, 'tabDefRedes')">Redes</button>
+            <button class="tab-btn" onclick="trocarAba(event, 'tabDefPrivacidade')">Privacidade</button>
+            <button class="tab-btn" onclick="trocarAba(event, 'tabDefPreferencias')">Preferências</button>
+        </div>
+
+        <!-- Aba Perfil -->
+        <div class="tab-content-panel active" id="tabDefPerfil">
+            <div class="def-group-title"><i data-lucide="user" style="color:var(--primary); width:18px;"></i> Aparência do perfil</div>
+            <div class="def-group-sub">Escolha como sua conta aparece para a comunidade.</div>
+            
+            <div style="background:#13151b; height:140px; border-radius:12px; margin-bottom:16px; position:relative; border:1px solid var(--border);">
+                <div style="position:absolute; left:16px; bottom:-25px; width:65px; height:65px; border-radius:50%; background:#232730; border:3px solid var(--bg-body); display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:700;">E</div>
             </div>
 
-            <p style="text-align: center; font-size: 13px; color: var(--text-secondary); margin-top: 20px;">
-                Já possui uma conta? <a href="#" style="color: #fff; font-weight: 700; text-decoration: none;">Conecte-se</a>
-            </p>
+            <label style="font-size:12px; color:var(--text-secondary); display:block; margin-top:35px; margin-bottom:6px;">Biografia</label>
+            <textarea style="width:100%; height:90px; background:#12141a; border:1px solid var(--border); border-radius:var(--radius-md); padding:12px; color:#fff; resize:none; font-size:13px;" placeholder="Fale um pouco sobre você..."></textarea>
+            <span style="font-size:11px; color:var(--text-secondary);">Máximo de 300 caracteres.</span>
+
+            <button class="btn-save-def" onclick="alert('Alterações salvas!')"><i data-lucide="save" style="width:16px; display:inline; vertical-align:middle;"></i> Salvar alterações</button>
+        </div>
+
+        <!-- Aba Preferências (Com Switches) -->
+        <div class="tab-content-panel" id="tabDefPreferencias">
+            <div class="def-group-title"><i data-lucide="sliders" style="color:var(--primary); width:18px;"></i> Preferências</div>
+            <div class="def-group-sub">Ajuste o comportamento da sua conta no site.</div>
+
+            <div class="switch-row">
+                <div class="switch-label">
+                    <h5>Salvar episódio automaticamente</h5>
+                    <p>Marca como assistido/jogado ao abrir pela lista.</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="switch-row">
+                <div class="switch-label">
+                    <h5>Ocultar catálogo adulto</h5>
+                    <p>Esconde conteúdo adulto dos menus e listagens.</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="switch-row">
+                <div class="switch-label">
+                    <h5>Banner nas mensagens da sala</h5>
+                    <p>Usa seu banner como fundo no chat do Watch2Gether.</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <button class="btn-save-def" onclick="alert('Preferências atualizadas!')"><i data-lucide="save" style="width:16px; display:inline; vertical-align:middle;"></i> Salvar alterações</button>
+        </div>
+    </div>
+
+    <!-- PÁGINA DE CADASTRO -->
+    <div class="app-view" id="authPage">
+        <header style="position: fixed; top: 0; left: 0; right: 0; background: var(--bg-body);">
+            <button class="icon-btn" onclick="fecharView('authPage')"><i data-lucide="arrow-left"></i></button>
+            <div class="brand-logo"><h1>RADISH <span>GAMES</span></h1></div>
+            <button class="icon-btn" style="opacity: 0;"><i data-lucide="search"></i></button>
+        </header>
+
+        <form onsubmit="event.preventDefault(); cadastrarUsuarioEfetivo();">
+            <div class="input-group" style="margin-bottom:14px;">
+                <label style="font-size:12px; color:var(--text-secondary); display:block; margin-bottom:6px;">Nome do usuário</label>
+                <input type="text" id="regUsuarioNome" placeholder="Nome do usuário" required style="width:100%; background:#12141a; border:1px solid var(--border); padding:13px; border-radius:var(--radius-md); color:#fff; outline:none;">
+            </div>
+            <div class="input-group" style="margin-bottom:14px;">
+                <label style="font-size:12px; color:var(--text-secondary); display:block; margin-bottom:6px;">Email</label>
+                <input type="email" placeholder="Email" required style="width:100%; background:#12141a; border:1px solid var(--border); padding:13px; border-radius:var(--radius-md); color:#fff; outline:none;">
+            </div>
+            <button type="submit" class="btn-save-def" style="margin-top:10px;">Criar conta</button>
         </form>
     </div>
 
-    <!-- MODAL DE ADICIONAR URL DA FOTO DE PERFIL (CLIQUE NO BOTÃO VERDE) -->
-    <div class="form-modal" id="modalAvatarUrl">
-        <div class="form-container">
-            <h3>Foto de Perfil</h3>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Cole a URL de uma imagem para o seu perfil:</p>
-            <input type="url" id="avatarInputUrl" placeholder="https://exemplo.com/sua-foto.jpg">
-            <button class="submit" onclick="definirAvatarUrl()">Salvar Foto</button>
-            <button onclick="toggleModal('modalAvatarUrl')" style="width:100%; background:none; border:none; color:var(--text-secondary); margin-top:10px; cursor:pointer;">Cancelar</button>
-        </div>
-    </div>
-
-    <!-- Header Principal -->
+    <!-- HEADER PRINCIPAL -->
     <header>
-        <button class="icon-btn" onclick="toggleSideMenu()">
-            <i data-lucide="menu"></i>
-        </button>
+        <button class="icon-btn" onclick="toggleSideMenu()"><i data-lucide="menu"></i></button>
         <a href="#" class="brand-logo">
             <h1>RADISH <span>GAMES</span></h1>
             <small>ラディッシュ ゲーム</small>
         </a>
-        <button class="icon-btn" onclick="toggleSearch()">
-            <i data-lucide="search"></i>
-        </button>
+        <button class="icon-btn" onclick="toggleSearch()"><i data-lucide="search"></i></button>
     </header>
 
-    <!-- Barra de Pesquisa Expansível -->
+    <!-- BARRA DE PESQUISA -->
     <div class="search-drawer" id="searchDrawer">
         <input type="text" id="searchInput" placeholder="Pesquisar jogos..." onkeyup="filtrarJogos()">
     </div>
 
-    <!-- Banner Principal -->
+    <!-- BANNER HERO -->
     <div class="hero">
-        <div class="hero-tags">
-            <span class="tag-cat">Destaque</span>
-            <span class="tag-div">•</span>
-            <span>Web Games</span>
-        </div>
+        <div class="hero-tags"><span class="tag-cat">Destaque</span><span class="tag-div">•</span><span>Web Games</span></div>
         <h2 class="hero-title">Mushoku Tensei Game</h2>
-        <div class="hero-dots">
-            <div class="dot active"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-        </div>
+        <div class="hero-dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
     </div>
 
-    <!-- Seção: Novos Jogos -->
+    <!-- SEÇÃO: NOVOS JOGOS -->
     <div class="section-header">
         <h3 class="section-title">Novos jogos</h3>
         <a href="#" class="section-more">Tudo</a>
@@ -876,49 +1125,33 @@
         <div style="padding: 10px; color: var(--text-secondary); font-size: 12px;">Carregando catálogo...</div>
     </div>
 
-    <!-- Seção: Em Alta (Top 5 estilo Sushi) -->
+    <!-- SEÇÃO: EM ALTA -->
     <div class="section-header">
         <h3 class="section-title">Em Alta - Top 5</h3>
         <a href="#" class="section-more">Tudo</a>
     </div>
-    <div class="horizontal-list" id="listaTop5">
-        <!-- Injetado dinamicamente com numeração gigante -->
-    </div>
+    <div class="horizontal-list" id="listaTop5"></div>
 
-    <!-- Bottom Navigation Bar -->
+    <!-- BOTTOM NAVIGATION -->
     <nav class="bottom-nav">
-        <button class="nav-item active">
-            <i data-lucide="home"></i>
-            <span>Início</span>
-        </button>
-        <button class="nav-item" onclick="toggleModal('modalEnvio')">
-            <i data-lucide="plus-circle"></i>
-            <span>Publicar</span>
-        </button>
-        <button class="nav-item" onclick="alert('Histórico em breve')">
-            <i data-lucide="clock"></i>
-            <span>Histórico</span>
-        </button>
-        <button class="nav-item" onclick="abrirCadastro()">
-            <i data-lucide="user"></i>
-            <span>Perfil</span>
-        </button>
+        <button class="nav-item active"><i data-lucide="home"></i><span>Início</span></button>
+        <button class="nav-item" onclick="toggleModal('modalEnvio')"><i data-lucide="plus-circle"></i><span>Publicar</span></button>
+        <button class="nav-item" onclick="abrirView('viewNotificacoes')"><i data-lucide="bell"></i><span>Avisos</span></button>
+        <button class="nav-item" onclick="abrirView('viewPerfil')"><i data-lucide="user"></i><span>Perfil</span></button>
     </nav>
 
-    <!-- Modal Player (Iframe Fullscreen) -->
+    <!-- MODAL PLAYER -->
     <div class="player-modal" id="modalPlayer">
         <div class="player-bar">
             <span id="playerTitulo" style="font-weight:700; font-size:14px;">Carregando Game...</span>
-            <button class="icon-btn" onclick="fecharPlayer()">
-                <i data-lucide="x"></i>
-            </button>
+            <button class="icon-btn" onclick="fecharPlayer()"><i data-lucide="x"></i></button>
         </div>
         <div class="player-frame-container">
             <iframe id="gameIframe" src="" allow="fullscreen; autoplay"></iframe>
         </div>
     </div>
 
-    <!-- Modal de Envio -->
+    <!-- MODAL DE ENVIO -->
     <div class="form-modal" id="modalEnvio">
         <div class="form-container">
             <h3>Publicar no Radish</h3>
@@ -932,53 +1165,88 @@
     </div>
 
     <script>
-        // Inicialização de Ícones
         lucide.createIcons();
 
-        // Funções do Drawer Menu Lateral
+        // CONTROLE DO MENU LATERAL E DO DROPDOWN DO USUÁRIO
         function toggleSideMenu() {
-            const menu = document.getElementById('sideMenu');
-            const overlay = document.getElementById('sideMenuOverlay');
-            menu.classList.toggle('active');
-            overlay.classList.toggle('active');
+            document.getElementById('sideMenu').classList.toggle('active');
+            document.getElementById('sideMenuOverlay').classList.toggle('active');
+            document.getElementById('userDropdownMenu').classList.remove('active');
+            document.getElementById('menuUserName').classList.remove('active');
         }
 
-        // Funções da Tela de Cadastro
-        function abrirCadastro() {
+        function toggleUserDropdown(event) {
+            event.stopPropagation();
+            const drop = document.getElementById('userDropdownMenu');
+            const name = document.getElementById('menuUserName');
+            drop.classList.toggle('active');
+            name.classList.toggle('active');
+        }
+
+        // SISTEMA DE NAVEGAÇÃO DE VIEWS / TELAS
+        function abrirView(viewId) {
+            document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
             if (document.getElementById('sideMenu').classList.contains('active')) {
                 toggleSideMenu();
             }
-            document.getElementById('authPage').classList.add('active');
         }
 
-        function fecharCadastro() {
-            document.getElementById('authPage').classList.remove('active');
+        function fecharView(viewId) {
+            document.getElementById(viewId).classList.remove('active');
         }
 
-        function togglePasswordVisibility(inputId, btn) {
-            const input = document.getElementById(inputId);
-            const icon = btn.querySelector('i');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.setAttribute('data-lucide', 'eye');
-            } else {
-                input.type = 'password';
-                icon.setAttribute('data-lucide', 'eye-off');
-            }
-            lucide.createIcons();
+        function abrirCadastro() {
+            abrirView('authPage');
         }
 
-        function definirAvatarUrl() {
-            const url = document.getElementById('avatarInputUrl').value;
-            if (url) {
-                document.getElementById('avatarPreviewBox').style.backgroundImage = `url('${url}')`;
-                toggleModal('modalAvatarUrl');
-            } else {
-                alert('Insira uma URL válida!');
-            }
+        // ALTERNAR ABAS
+        function trocarAba(evt, tabId) {
+            const parent = evt.target.closest('.app-view');
+            parent.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            parent.querySelectorAll('.tab-content-panel').forEach(panel => panel.classList.remove('active'));
+
+            evt.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
         }
 
-        // Firebase Configuração Oficial
+        // AUTENTICAÇÃO SIMULADA (VISUAL DOS PRINTS)
+        let usuarioAtivo = null;
+
+        function cadastrarUsuarioEfetivo() {
+            const nome = document.getElementById('regUsuarioNome').value || 'Error404pagenotafo';
+            definirSessaoUsuario(nome);
+            fecharView('authPage');
+            alert('Conta criada com sucesso!');
+        }
+
+        function fazerLoginSimulado() {
+            definirSessaoUsuario('Error404pagenotafo');
+            alert('Conectado como Error404pagenotafo!');
+        }
+
+        function definirSessaoUsuario(nome) {
+            usuarioAtivo = nome;
+            document.getElementById('authActionsDeslogado').style.display = 'none';
+            document.getElementById('authActionsLogado').style.display = 'flex';
+
+            document.getElementById('menuUserName').innerText = nome;
+            document.getElementById('menuUserAvatar').innerText = nome.charAt(0).toUpperCase();
+
+            document.getElementById('profilePageName').innerText = nome;
+            document.getElementById('profileBreadcrumbUser').innerText = nome;
+            document.getElementById('profilePageAvatar').innerText = nome.charAt(0).toUpperCase();
+        }
+
+        function desconectarUsuario() {
+            usuarioAtivo = null;
+            document.getElementById('authActionsDeslogado').style.display = 'block';
+            document.getElementById('authActionsLogado').style.display = 'none';
+            document.getElementById('userDropdownMenu').classList.remove('active');
+            alert('Você foi desconectado!');
+        }
+
+        // FIREBASE & PLAYER
         const firebaseConfig = {
             apiKey: "AIzaSyDDVplbkVC4YepZDJOzFG9bqgzz1tBAOq8",
             authDomain: "radish-1c9ed.firebaseapp.com",
@@ -995,9 +1263,7 @@
         function toggleSearch() {
             const drawer = document.getElementById('searchDrawer');
             drawer.classList.toggle('active');
-            if (drawer.classList.contains('active')) {
-                document.getElementById('searchInput').focus();
-            }
+            if (drawer.classList.contains('active')) document.getElementById('searchInput').focus();
         }
 
         function toggleModal(id) {
@@ -1015,90 +1281,15 @@
             document.getElementById('modalPlayer').classList.remove('active');
         }
 
-        // Carregamento Firestore com Tratamento Visual Sushi
-        // ==================== DEPOIS ====================
-        // Carregamento Firestore otimizado com Ordenação e Índices
         function carregarJogos() {
-            const listaNovos = document.getElementById('listaNovos');
-            const listaTop5 = document.getElementById('listaTop5');
-
-            // 1. Consulta para "Novos Jogos" (Ordenado por data decrescente, limite de 10)
-            db.collection("jogos")
-              .orderBy("dataCriacao", "desc")
-              .limit(10)
-              .get()
-              .then((snapshot) => {
-                  listaNovos.innerHTML = '';
-                  cacheJogos = [];
-
-                  if (snapshot.empty) {
-                      listaNovos.innerHTML = '<p style="color:var(--text-secondary); font-size:12px;">Nenhum jogo postado.</p>';
-                      return;
-                  }
-
-                  snapshot.forEach((doc) => {
-                      const jogo = doc.data();
-                      cacheJogos.push(jogo);
-                      const capa = jogo.cover || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400&auto=format&fit=crop';
-
-                      listaNovos.innerHTML += `
-                          <div class="game-card" onclick="abrirPlayer('${jogo.embedUrl}', '${jogo.titulo}')">
-                              <div class="poster-wrapper">
-                                  <img class="poster-img" src="${capa}" loading="lazy" alt="${jogo.titulo}">
-                                  <span class="badge-status">Novo</span>
-                                  <span class="badge-type">HTML5</span>
-                              </div>
-                              <div class="game-info">
-                                  <div class="game-title">${jogo.titulo}</div>
-                                  <div class="game-meta">Por ${jogo.autor || 'Anônimo'}</div>
-                              </div>
-                          </div>
-                      `;
-                  });
-              })
-              .catch(err => {
-                  console.error("Erro ao carregar novos jogos:", err);
-                  listaNovos.innerHTML = "Erro ao carregar lançamentos.";
-              });
-
-            // 2. Consulta para "Em Alta - Top 5" (Ordenado pelos mais vistos)
-            db.collection("jogos")
-              .orderBy("views", "desc")
-              .limit(5)
-              .get()
-              .then((snapshot) => {
-                  listaTop5.innerHTML = '';
-
-                  if (snapshot.empty) {
-                      listaTop5.innerHTML = '<p style="color:var(--text-secondary); font-size:12px;">Nenhum jogo em alta.</p>';
-                      return;
-                  }
-
-                  let ranking = 1;
-                  snapshot.forEach((doc) => {
-                      const jogo = doc.data();
-                      const capa = jogo.cover || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400&auto=format&fit=crop';
-
-                      listaTop5.innerHTML += `
-                          <div class="game-card top-card" onclick="abrirPlayer('${jogo.embedUrl}', '${jogo.titulo}')">
-                              <div class="top-number">${ranking}</div>
-                              <div class="poster-wrapper">
-                                  <img class="poster-img" src="${capa}" loading="lazy" alt="${jogo.titulo}">
-                                  <span class="badge-status" style="background:#f59e0b; color:#000;">★ TOP</span>
-                              </div>
-                              <div class="game-info">
-                                  <div class="game-title">${jogo.titulo}</div>
-                                  <div class="game-meta">${jogo.views || 0} visualizações</div>
-                              </div>
-                          </div>
-                      `;
-                      ranking++;
-                  });
-              })
-              .catch(err => {
-                  console.error("Erro ao carregar Top 5:", err);
-                  listaTop5.innerHTML = "Erro ao carregar Top 5.";
-              });
+            db.collection("jogos").get().then((snapshot) => {
+                cacheJogos = [];
+                snapshot.forEach(doc => cacheJogos.push(doc.data()));
+                renderizar(cacheJogos);
+            }).catch(err => {
+                console.error(err);
+                document.getElementById('listaNovos').innerHTML = "Erro ao carregar dados.";
+            });
         }
 
         function renderizar(jogos) {
@@ -1115,7 +1306,6 @@
             jogos.forEach((jogo, index) => {
                 const capa = jogo.cover || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400&auto=format&fit=crop';
                 
-                // Card Horizontal Padrão
                 listaNovos.innerHTML += `
                     <div class="game-card" onclick="abrirPlayer('${jogo.embedUrl}', '${jogo.titulo}')">
                         <div class="poster-wrapper">
@@ -1130,7 +1320,6 @@
                     </div>
                 `;
 
-                // Top 5 com Numeração
                 if (index < 5) {
                     listaTop5.innerHTML += `
                         <div class="game-card top-card" onclick="abrirPlayer('${jogo.embedUrl}', '${jogo.titulo}')">
@@ -1170,7 +1359,7 @@
                 titulo: titulo,
                 embedUrl: embedUrl,
                 cover: cover || '',
-                autor: autor || "Anônimo",
+                autor: autor || (usuarioAtivo || "Anônimo"),
                 dataCriacao: new Date()
             }).then(() => {
                 toggleModal('modalEnvio');
