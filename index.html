@@ -1016,15 +1016,89 @@
         }
 
         // Carregamento Firestore com Tratamento Visual Sushi
+        // ==================== DEPOIS ====================
+        // Carregamento Firestore otimizado com Ordenação e Índices
         function carregarJogos() {
-            db.collection("jogos").get().then((snapshot) => {
-                cacheJogos = [];
-                snapshot.forEach(doc => cacheJogos.push(doc.data()));
-                renderizar(cacheJogos);
-            }).catch(err => {
-                console.error(err);
-                document.getElementById('listaNovos').innerHTML = "Erro ao carregar dados.";
-            });
+            const listaNovos = document.getElementById('listaNovos');
+            const listaTop5 = document.getElementById('listaTop5');
+
+            // 1. Consulta para "Novos Jogos" (Ordenado por data decrescente, limite de 10)
+            db.collection("jogos")
+              .orderBy("dataCriacao", "desc")
+              .limit(10)
+              .get()
+              .then((snapshot) => {
+                  listaNovos.innerHTML = '';
+                  cacheJogos = [];
+
+                  if (snapshot.empty) {
+                      listaNovos.innerHTML = '<p style="color:var(--text-secondary); font-size:12px;">Nenhum jogo postado.</p>';
+                      return;
+                  }
+
+                  snapshot.forEach((doc) => {
+                      const jogo = doc.data();
+                      cacheJogos.push(jogo);
+                      const capa = jogo.cover || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400&auto=format&fit=crop';
+
+                      listaNovos.innerHTML += `
+                          <div class="game-card" onclick="abrirPlayer('${jogo.embedUrl}', '${jogo.titulo}')">
+                              <div class="poster-wrapper">
+                                  <img class="poster-img" src="${capa}" loading="lazy" alt="${jogo.titulo}">
+                                  <span class="badge-status">Novo</span>
+                                  <span class="badge-type">HTML5</span>
+                              </div>
+                              <div class="game-info">
+                                  <div class="game-title">${jogo.titulo}</div>
+                                  <div class="game-meta">Por ${jogo.autor || 'Anônimo'}</div>
+                              </div>
+                          </div>
+                      `;
+                  });
+              })
+              .catch(err => {
+                  console.error("Erro ao carregar novos jogos:", err);
+                  listaNovos.innerHTML = "Erro ao carregar lançamentos.";
+              });
+
+            // 2. Consulta para "Em Alta - Top 5" (Ordenado pelos mais vistos)
+            db.collection("jogos")
+              .orderBy("views", "desc")
+              .limit(5)
+              .get()
+              .then((snapshot) => {
+                  listaTop5.innerHTML = '';
+
+                  if (snapshot.empty) {
+                      listaTop5.innerHTML = '<p style="color:var(--text-secondary); font-size:12px;">Nenhum jogo em alta.</p>';
+                      return;
+                  }
+
+                  let ranking = 1;
+                  snapshot.forEach((doc) => {
+                      const jogo = doc.data();
+                      const capa = jogo.cover || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400&auto=format&fit=crop';
+
+                      listaTop5.innerHTML += `
+                          <div class="game-card top-card" onclick="abrirPlayer('${jogo.embedUrl}', '${jogo.titulo}')">
+                              <div class="top-number">${ranking}</div>
+                              <div class="poster-wrapper">
+                                  <img class="poster-img" src="${capa}" loading="lazy" alt="${jogo.titulo}">
+                                  <span class="badge-status" style="background:#f59e0b; color:#000;">★ TOP</span>
+                              </div>
+                              <div class="game-info">
+                                  <div class="game-title">${jogo.titulo}</div>
+                                  <div class="game-meta">${jogo.views || 0} visualizações</div>
+                              </div>
+                          </div>
+                      `;
+                      ranking++;
+                  });
+              })
+              .catch(err => {
+                  console.error("Erro ao carregar Top 5:", err);
+                  listaTop5.innerHTML = "Erro ao carregar Top 5.";
+              });
         }
 
         function renderizar(jogos) {
