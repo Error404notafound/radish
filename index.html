@@ -1333,14 +1333,14 @@
             </div>
 
             <div class="arcade-buttons-grid">
-                <button class="arc-btn arc-green" onclick="simularTecla('KeyZ')">A1</button>
-                <button class="arc-btn arc-blue" onclick="simularTecla('KeyX')">A2</button>
-                <button class="arc-btn arc-black" onclick="simularTecla('KeyC')">A3</button>
-                <button class="arc-btn arc-black" onclick="simularTecla('ShiftLeft')">S1</button>
-                <button class="arc-btn arc-red" onclick="simularTecla('Space')">A4</button>
-                <button class="arc-btn arc-yellow" onclick="simularTecla('KeyA')">A5</button>
-                <button class="arc-btn arc-black" onclick="simularTecla('KeyS')">A6</button>
-                <button class="arc-btn arc-black" onclick="simularTecla('Enter')">S2</button>
+                <button class="arc-btn arc-green" onmousedown="simularTecla('KeyZ', event)" ontouchstart="simularTecla('KeyZ', event)">A1</button>
+                <button class="arc-btn arc-blue" onmousedown="simularTecla('KeyX', event)" ontouchstart="simularTecla('KeyX', event)">A2</button>
+                <button class="arc-btn arc-black" onmousedown="simularTecla('KeyC', event)" ontouchstart="simularTecla('KeyC', event)">A3</button>
+                <button class="arc-btn arc-black" onmousedown="simularTecla('ShiftLeft', event)" ontouchstart="simularTecla('ShiftLeft', event)">S1</button>
+                <button class="arc-btn arc-red" onmousedown="simularTecla('Space', event)" ontouchstart="simularTecla('Space', event)">A4</button>
+                <button class="arc-btn arc-yellow" onmousedown="simularTecla('KeyA', event)" ontouchstart="simularTecla('KeyA', event)">A5</button>
+                <button class="arc-btn arc-black" onmousedown="simularTecla('KeyS', event)" ontouchstart="simularTecla('KeyS', event)">A6</button>
+                <button class="arc-btn arc-black" onmousedown="simularTecla('Enter', event)" ontouchstart="simularTecla('Enter', event)">S2</button>
             </div>
         </div>
 
@@ -1504,20 +1504,128 @@
             count.innerText = parseInt(count.innerText) + val;
         }
 
-        function simularTecla(codigo) {
-            window.dispatchEvent(new KeyboardEvent('keydown', { code: codigo, key: codigo }));
-            setTimeout(() => {
-                window.dispatchEvent(new KeyboardEvent('keyup', { code: codigo, key: codigo }));
-            }, 100);
+        // =================================================================
+        // SISTEMA DE CONTROLES VIRTUAIS (ARCADE BRIDGE COM FOCO E EVENTOS)
+        // =================================================================
+
+        // Garante que o jogo não perca o foco do teclado ao tocar nos botões
+        function manterFocoNoJogo() {
+            const iframe = document.getElementById('gameScreenIframe');
+            if (iframe && iframe.contentWindow) {
+                try {
+                    iframe.contentWindow.focus();
+                } catch (e) {}
+            }
         }
 
-        // Joystick Touch para Celular
+        // Tabela de keyCodes clássicos (necessário para jogos antigos em JS)
+        const KEY_CODES = {
+            'ArrowUp': 38,
+            'ArrowDown': 40,
+            'ArrowLeft': 37,
+            'ArrowRight': 39,
+            'KeyZ': 90,
+            'KeyX': 88,
+            'KeyC': 67,
+            'ShiftLeft': 16,
+            'Space': 32,
+            'KeyA': 65,
+            'KeyS': 83,
+            'Enter': 13
+        };
+
+        // Dispara o evento de tecla no navegador e tenta enviar para o iframe
+        function dispararEventoTecla(tipo, code) {
+            const keyCode = KEY_CODES[code] || 0;
+            const iframe = document.getElementById('gameScreenIframe');
+
+            const evento = new KeyboardEvent(tipo, {
+                key: code.replace('Key', '').replace('Arrow', ''),
+                code: code,
+                keyCode: keyCode,
+                which: keyCode,
+                bubbles: true,
+                cancelable: true,
+                view: window
+            });
+
+            // Dispara na janela principal
+            window.dispatchEvent(evento);
+            document.dispatchEvent(evento);
+
+            // Tenta injetar no iframe diretamente ou via postMessage (Cross-Origin)
+            if (iframe && iframe.contentWindow) {
+                try {
+                    iframe.contentWindow.dispatchEvent(evento);
+                    iframe.contentDocument.dispatchEvent(evento);
+                } catch (err) {
+                    iframe.contentWindow.postMessage({
+                        type: tipo,
+                        button: code,
+                        keyCode: keyCode
+                    }, "*");
+                }
+            }
+        }
+
+        // Função dos botões de ação (A1 a S2)
+        function simularTecla(codigo, evt) {
+            if (evt) evt.preventDefault();
+
+            dispararEventoTecla('keydown', codigo);
+            manterFocoNoJogo();
+
+            setTimeout(() => {
+                dispararEventoTecla('keyup', codigo);
+                manterFocoNoJogo();
+            }, 120);
+        }
+
+        // Joystick analógico convertido para Setas do Teclado (D-Pad)
         const thumb = document.getElementById('joystickThumb');
         const base = document.getElementById('joystickBase');
         let drag = false;
+        let direcaoAtual = null;
 
-        function handleJoystick(e) {
+        function processarDirecao(dx, dy) {
+            let novaDirecao = null;
+            const sensibilidade = 12;
+
+            if (Math.abs(dx) > Math.abs(dy)) {
+                if (dx > sensibilidade) novaDirecao = 'ArrowRight';
+                else if (dx < -sensibilidade) novaDirecao = 'ArrowLeft';
+            } else {
+                if (dy > sensibilidade) novaDirecao = 'ArrowDown';
+                else if (dy < -sensibilidade) novaDirecao = 'ArrowUp';
+            }
+
+            if (novaDirecao !== direcaoAtual) {
+                if (direcaoAtual) {
+                    dispararEventoTecla('keyup', direcaoAtual);
+                }
+                if (novaDirecao) {
+                    dispararEventoTecla('keydown', novaDirecao);
+                    manterFocoNoJogo();
+                }
+                direcaoAtual = novaDirecao;
+            }
+        }
+
+        function soltarJoystick() {
+            if (!drag) return;
+            drag = false;
+            if (thumb) thumb.style.transform = 'translate(0,0)';
+            if (direcaoAtual) {
+                dispararEventoTecla('keyup', direcaoAtual);
+                direcaoAtual = null;
+            }
+            manterFocoNoJogo();
+        }
+
+        function moverJoystick(e) {
             if (!drag || !base || !thumb) return;
+            if (e.cancelable) e.preventDefault();
+
             const rect = base.getBoundingClientRect();
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
             const clientY = e.touches ? e.touches[0].clientY : e.clientY;
@@ -1528,15 +1636,18 @@
             const angle = Math.atan2(dy, dx);
 
             thumb.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px)`;
+            processarDirecao(dx, dy);
         }
 
-        if(thumb && base) {
-            thumb.addEventListener('mousedown', () => drag = true);
-            thumb.addEventListener('touchstart', () => drag = true);
-            window.addEventListener('mouseup', () => { drag = false; thumb.style.transform = 'translate(0,0)'; });
-            window.addEventListener('touchend', () => { drag = false; thumb.style.transform = 'translate(0,0)'; });
-            window.addEventListener('mousemove', handleJoystick);
-            window.addEventListener('touchmove', handleJoystick);
+        if (thumb && base) {
+            thumb.addEventListener('mousedown', (e) => { e.preventDefault(); drag = true; });
+            thumb.addEventListener('touchstart', (e) => { e.preventDefault(); drag = true; }, { passive: false });
+            
+            window.addEventListener('mouseup', soltarJoystick);
+            window.addEventListener('touchend', soltarJoystick);
+            
+            window.addEventListener('mousemove', moverJoystick);
+            window.addEventListener('touchmove', moverJoystick, { passive: false });
         }
 
         // FIREBASE & DATABASE
