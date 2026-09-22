@@ -2037,12 +2037,44 @@
             listaNovos.innerHTML = '';
             listaTop5.innerHTML = '';
 
-            if (jogos.length === 0) {
-                listaNovos.innerHTML = '<p style="color:var(--text-secondary); font-size:12px;">Nenhum jogo encontrado.</p>';
-                return;
-            }
+            // Capa oficial do Flappy Bird fornecida
+            const capaFlappy = "https://m.media-amazon.com/images/M/MV5BN2U3ODIyMmMtOTNhYi00ZTFhLWFhMjctYTE5ZjAwNzRkZmQ4XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg";
 
+            // 1. Inserir o Card do Flappy Bird Nativo em DESTAQUE no início de "Novos jogos"
+            listaNovos.innerHTML += `
+                <div class="game-card" onclick="abrirContainerJogo('flappy', 'Flappy Bird', '${capaFlappy}')">
+                    <div class="poster-wrapper">
+                        <img class="poster-img" src="${capaFlappy}" loading="lazy" alt="Flappy Bird">
+                        <span class="badge-status">Novo</span>
+                        <span class="badge-type" style="background:#22c55e;">NATIVO</span>
+                    </div>
+                    <div class="game-info">
+                        <div class="game-title">Flappy Bird</div>
+                        <div class="game-meta">Por Radish Team</div>
+                    </div>
+                </div>
+            `;
+
+            // 2. Inserir o Flappy Bird como #1 no "Top 5"
+            listaTop5.innerHTML += `
+                <div class="game-card top-card" onclick="abrirContainerJogo('flappy', 'Flappy Bird', '${capaFlappy}')">
+                    <div class="top-number">1</div>
+                    <div class="poster-wrapper">
+                        <img class="poster-img" src="${capaFlappy}" loading="lazy" alt="Flappy Bird">
+                        <span class="badge-status" style="background:#f59e0b; color:#000;">★ TOP</span>
+                    </div>
+                    <div class="game-info">
+                        <div class="game-title">Flappy Bird</div>
+                        <div class="game-meta">Popular</div>
+                    </div>
+                </div>
+            `;
+
+            // 3. Renderizar os outros jogos vindos do Firebase logo em seguida
             jogos.forEach((jogo, index) => {
+                // Evita duplicar se já houver um jogo chamado Flappy Bird no Firebase
+                if (jogo.titulo && jogo.titulo.toLowerCase().includes('flappy')) return;
+
                 const capa = jogo.cover || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400&auto=format&fit=crop';
                 
                 listaNovos.innerHTML += `
@@ -2059,10 +2091,10 @@
                     </div>
                 `;
 
-                if (index < 5) {
+                if (index < 4) {
                     listaTop5.innerHTML += `
                         <div class="game-card top-card" onclick="abrirContainerJogo('${jogo.embedUrl}', '${jogo.titulo}', '${capa}')">
-                            <div class="top-number">${index + 1}</div>
+                            <div class="top-number">${index + 2}</div>
                             <div class="poster-wrapper">
                                 <img class="poster-img" src="${capa}" loading="lazy" alt="${jogo.titulo}">
                                 <span class="badge-status" style="background:#f59e0b; color:#000;">★ TOP</span>
@@ -2075,6 +2107,7 @@
                     `;
                 }
             });
+
             lucide.createIcons();
         }
 
