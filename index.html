@@ -1306,12 +1306,17 @@
             </div>
         </div>
 
-        <!-- Tela do Jogo / Player Iframe -->
-        <div class="game-screen-area" id="screenAreaBox">
+        <!-- Tela do Jogo com Canvas Nativo e Suporte a Iframe -->
+        <div class="game-screen-area" id="screenAreaBox" style="position:relative; width:100%; height:260px; background:#4ec0ca; overflow:hidden;">
             <button class="big-play-btn" id="btnBigPlay" onclick="iniciarJogoIframe()">
                 <i data-lucide="play" style="fill: #fff; margin-left: 4px;"></i>
             </button>
-            <iframe id="gameScreenIframe" src="" allowfullscreen></iframe>
+            
+            <!-- Canvas do Jogo Flappy Bird Nativo -->
+            <canvas id="flappyCanvas" width="360" height="260" style="display:none; width:100%; height:100%;"></canvas>
+            
+            <!-- Iframe para outros jogos externos via URL -->
+            <iframe id="gameScreenIframe" src="" allowfullscreen style="display:none; width:100%; height:100%; border:none;"></iframe>
         </div>
 
         <div class="game-mode-bar">
@@ -1492,11 +1497,321 @@
             document.getElementById('gamePageView').classList.remove('active');
         }
 
+        // =================================================================
+        // ENGINE NATIVA FLAPPY BIRD COM FÍSICA, SONS E PLACAR
+        // =================================================================
+
+        let flappyAtivo = false;
+        let audioCtx = null;
+        let highScore = parseInt(localStorage.getItem('radish_flappy_high')) || 0;
+
+        // Efeitos Sonoros Retrô (Web Audio API)
+        function tocarSom(tipo) {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (tipo === 'pulo') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(420, now);
+                    osc.frequency.exponentialRampToValueAtTime(850, now + 0.08);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.08);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                } else if (tipo === 'ponto') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(980, now);
+                    osc.frequency.setValueAtTime(1320, now + 0.07);
+                    gain.gain.setValueAtTime(0.18, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.16);
+                    osc.start(now);
+                    osc.stop(now + 0.16);
+                } else if (tipo === 'morte') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(260, now);
+                    osc.frequency.linearRampToValueAtTime(70, now + 0.22);
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.22);
+                    osc.start(now);
+                    osc.stop(now + 0.22);
+                }
+            } catch(e) {}
+        }
+
+        const canvas = document.getElementById('flappyCanvas');
+        const ctx = canvas ? canvas.getContext('2d') : null;
+
+        let passaro = { x: 55, y: 110, v: 0, g: 0.26, pulo: -4.8, r: 11 };
+        let canos = [];
+        let score = 0;
+        let estadoJogo = 'menu'; // 'menu', 'jogando', 'gameover'
+        let frameCount = 0;
+
+        function resetarFlappy() {
+            passaro.y = 110;
+            passaro.v = 0;
+            canos = [];
+            score = 0;
+            frameCount = 0;
+            estadoJogo = 'jogando';
+        }
+
+        function pularPassaro() {
+            if (estadoJogo === 'menu' || estadoJogo === 'gameover') {
+                resetarFlappy();
+                tocarSom('pulo');
+                return;
+            }
+            if (estadoJogo === 'jogando') {
+                passaro.v = passaro.pulo;
+                tocarSom('pulo');
+            }
+        }
+
+        // Loop de Renderização e Física
+        function loopFlappy() {
+            if (!flappyAtivo || !ctx) return;
+
+            // 1. Céu Azul
+            ctx.fillStyle = '#4ec0ca';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Skyline de prédios ao fundo
+            ctx.fillStyle = '#b7e4e0';
+            ctx.fillRect(0, 160, canvas.width, 70);
+            ctx.fillStyle = '#8ad2cc';
+            ctx.fillRect(30, 140, 40, 90);
+            ctx.fillRect(90, 120, 50, 110);
+            ctx.fillRect(170, 135, 60, 95);
+            ctx.fillRect(250, 115, 45, 115);
+
+            if (estadoJogo === 'jogando') {
+                frameCount++;
+                passaro.v += passaro.g;
+                passaro.y += passaro.v;
+
+                // Gerar Canos
+                if (frameCount % 85 === 0) {
+                    const espaco = 82;
+                    const topo = Math.floor(Math.random() * (canvas.height - espaco - 70)) + 25;
+                    canos.push({ x: canvas.width, topo: topo, fundo: topo + espaco, passou: false });
+                }
+
+                // Mover Canos e Detectar Colisões
+                for (let i = canos.length - 1; i >= 0; i--) {
+                    canos[i].x -= 2;
+
+                    // Cano Superior
+                    ctx.fillStyle = '#73bf2e';
+                    ctx.fillRect(canos[i].x, 0, 44, canos[i].topo);
+                    ctx.strokeStyle = '#558022';
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(canos[i].x, 0, 44, canos[i].topo);
+                    ctx.fillRect(canos[i].x - 2, canos[i].topo - 14, 48, 14);
+                    ctx.strokeRect(canos[i].x - 2, canos[i].topo - 14, 48, 14);
+
+                    // Cano Inferior
+                    ctx.fillStyle = '#73bf2e';
+                    ctx.fillRect(canos[i].x, canos[i].fundo, 44, canvas.height - canos[i].fundo - 30);
+                    ctx.strokeRect(canos[i].x, canos[i].fundo, 44, canvas.height - canos[i].fundo - 30);
+                    ctx.fillRect(canos[i].x - 2, canos[i].fundo, 48, 14);
+                    ctx.strokeRect(canos[i].x - 2, canos[i].fundo, 48, 14);
+
+                    // Colisão
+                    if (passaro.x + passaro.r > canos[i].x && passaro.x - passaro.r < canos[i].x + 44) {
+                        if (passaro.y - passaro.r < canos[i].topo || passaro.y + passaro.r > canos[i].fundo) {
+                            estadoJogo = 'gameover';
+                            tocarSom('morte');
+                        }
+                    }
+
+                    // Pontuação
+                    if (!canos[i].passou && canos[i].x + 44 < passaro.x) {
+                        canos[i].passou = true;
+                        score++;
+                        if (score > highScore) {
+                            highScore = score;
+                            localStorage.setItem('radish_flappy_high', highScore);
+                        }
+                        tocarSom('ponto');
+                    }
+
+                    if (canos[i].x < -50) canos.splice(i, 1);
+                }
+
+                // Colisão com o chão
+                if (passaro.y + passaro.r >= canvas.height - 30) {
+                    passaro.y = canvas.height - 30 - passaro.r;
+                    estadoJogo = 'gameover';
+                    tocarSom('morte');
+                }
+            }
+
+            // 2. Chão
+            ctx.fillStyle = '#ded895';
+            ctx.fillRect(0, canvas.height - 30, canvas.width, 30);
+            ctx.fillStyle = '#73bf2e';
+            ctx.fillRect(0, canvas.height - 30, canvas.width, 6);
+            ctx.strokeStyle = '#558022';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(0, canvas.height - 30, canvas.width, 6);
+
+            // 3. Pássaro Amarelo
+            ctx.save();
+            ctx.translate(passaro.x, passaro.y);
+            const angulo = Math.min(Math.PI / 4, Math.max(-Math.PI / 4, (passaro.v * 0.12)));
+            ctx.rotate(angulo);
+
+            // Corpo Amarelo
+            ctx.fillStyle = '#f6d028';
+            ctx.beginPath();
+            ctx.arc(0, 0, passaro.r, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Asa
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(-7, -2, 8, 5);
+
+            // Bico Vermelho/Laranja
+            ctx.fillStyle = '#e86101';
+            ctx.fillRect(4, 1, 9, 6);
+            ctx.strokeRect(4, 1, 9, 6);
+
+            // Olho Grande
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(4, -4, 4.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.arc(5, -4, 1.8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            // 4. Placar Durante a Partida (Topo central)
+            if (estadoJogo === 'jogando') {
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '900 32px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 4;
+                ctx.strokeText(score, canvas.width / 2, 45);
+                ctx.fillText(score, canvas.width / 2, 45);
+            }
+
+            // 5. Menu Inicial
+            if (estadoJogo === 'menu') {
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '800 20px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 3;
+                ctx.strokeText('TOQUE PARA JOGAR', canvas.width / 2, 80);
+                ctx.fillText('TOQUE PARA JOGAR', canvas.width / 2, 80);
+
+                ctx.font = '600 12px Inter, sans-serif';
+                ctx.fillStyle = 'rgba(0,0,0,0.6)';
+                ctx.fillText('Use a tela, botão A1 ou joystick', canvas.width / 2, 105);
+            }
+
+            // 6. Game Over (Idêntico ao print 3 e 6)
+            if (estadoJogo === 'gameover') {
+                ctx.fillStyle = 'rgba(0,0,0,0.4)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#e06f53';
+                ctx.font = '900 24px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 3;
+                ctx.strokeText('GAME OVER', canvas.width / 2, 40);
+                ctx.fillText('GAME OVER', canvas.width / 2, 40);
+
+                // Caixa Bege do Placar
+                ctx.fillStyle = '#e9dcaf';
+                ctx.fillRect(canvas.width / 2 - 95, 52, 190, 130);
+                ctx.strokeStyle = '#543847';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(canvas.width / 2 - 95, 52, 190, 130);
+
+                // Score
+                ctx.fillStyle = '#e06f53';
+                ctx.font = '800 11px Inter, sans-serif';
+                ctx.fillText('SCORE', canvas.width / 2 - 45, 75);
+                ctx.fillStyle = '#000';
+                ctx.font = '900 24px Inter, sans-serif';
+                ctx.fillText(score, canvas.width / 2 - 45, 105);
+
+                // High Score
+                ctx.fillStyle = '#e06f53';
+                ctx.font = '800 11px Inter, sans-serif';
+                ctx.fillText('HIGH SCORE', canvas.width / 2 + 45, 75);
+                ctx.fillStyle = '#000';
+                ctx.font = '900 24px Inter, sans-serif';
+                ctx.fillText(highScore, canvas.width / 2 + 45, 105);
+
+                // Medalha
+                ctx.fillStyle = '#e06f53';
+                ctx.font = '700 10px Inter, sans-serif';
+                ctx.fillText('MEDAL', canvas.width / 2 - 45, 140);
+                ctx.fillStyle = score >= 5 ? '#f59e0b' : '#c8b496';
+                ctx.beginPath();
+                ctx.arc(canvas.width / 2 + 45, 140, 13, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Botão PLAY (Reiniciar)
+                ctx.fillStyle = '#22c55e';
+                ctx.fillRect(canvas.width / 2 - 50, 195, 100, 30);
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(canvas.width / 2 - 50, 195, 100, 30);
+                ctx.fillStyle = '#fff';
+                ctx.font = '900 13px Inter, sans-serif';
+                ctx.fillText('PLAY', canvas.width / 2, 215);
+            }
+
+            requestAnimationFrame(loopFlappy);
+        }
+
+        // Inicializador Inteligente: Executa o Flappy Bird Nativo ou Iframe
         function iniciarJogoIframe() {
             document.getElementById('btnBigPlay').style.display = 'none';
+
             const iframe = document.getElementById('gameScreenIframe');
-            iframe.src = jogoAtualEmbed;
-            iframe.style.display = 'block';
+            const flappy = document.getElementById('flappyCanvas');
+
+            // Se for Flappy Bird (ou se a URL contiver flappy)
+            if (!jogoAtualEmbed || jogoAtualEmbed.toLowerCase().includes('flappy')) {
+                iframe.style.display = 'none';
+                flappy.style.display = 'block';
+                flappyAtivo = true;
+                estadoJogo = 'menu';
+                loopFlappy();
+            } else {
+                flappy.style.display = 'none';
+                flappyAtivo = false;
+                iframe.src = jogoAtualEmbed;
+                iframe.style.display = 'block';
+            }
+        }
+
+        function fecharPaginaJogo() {
+            flappyAtivo = false;
+            document.getElementById('gameScreenIframe').src = '';
+            document.getElementById('gamePageView').classList.remove('active');
         }
 
         function curtirJogo(val) {
