@@ -1549,6 +1549,15 @@
         const canvas = document.getElementById('flappyCanvas');
         const ctx = canvas ? canvas.getContext('2d') : null;
 
+        // Ouvinte de toque/clique direto na tela do jogo
+        if (canvas) {
+            canvas.addEventListener('mousedown', pularPassaro);
+            canvas.addEventListener('touchstart', (e) => {
+                e.preventDefault(); // Impede o zoom acidental do celular
+                pularPassaro();
+            }, { passive: false });
+        }
+
         let passaro = { x: 55, y: 110, v: 0, g: 0.26, pulo: -4.8, r: 11 };
         let canos = [];
         let score = 0;
@@ -1820,6 +1829,12 @@
         }
 
         function simularTecla(codigo) {
+            // Se o Flappy Bird estiver ativo, qualquer botão de ação faz ele voar/reiniciar
+            if (flappyAtivo) {
+                pularPassaro();
+                return;
+            }
+
             window.dispatchEvent(new KeyboardEvent('keydown', { code: codigo, key: codigo }));
             setTimeout(() => {
                 window.dispatchEvent(new KeyboardEvent('keyup', { code: codigo, key: codigo }));
@@ -1830,6 +1845,8 @@
         const thumb = document.getElementById('joystickThumb');
         const base = document.getElementById('joystickBase');
         let drag = false;
+
+        let joystickPuloCooldown = false;
 
         function handleJoystick(e) {
             if (!drag || !base || !thumb) return;
@@ -1843,6 +1860,13 @@
             const angle = Math.atan2(dy, dx);
 
             thumb.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px)`;
+
+            // Se empurrar o analógico para cima no Flappy Bird, o pássaro voa
+            if (flappyAtivo && dy < -15 && !joystickPuloCooldown) {
+                pularPassaro();
+                joystickPuloCooldown = true;
+                setTimeout(() => { joystickPuloCooldown = false; }, 200);
+            }
         }
 
         if(thumb && base) {
