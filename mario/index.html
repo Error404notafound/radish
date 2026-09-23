@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Super Mario Bros - Single File</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        canvas {
+            background: #5c94fc;
+            image-rendering: pixelated;
+            width: 100%;
+            height: 100%;
+            max-width: 640px;
+            max-height: 480px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="marioCanvas" width="256" height="240"></canvas>
+
+<script>
+    const canvas = document.getElementById('marioCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // 1. ÁUDIO CHIPTUNE DO NES (WEB AUDIO API)
+    let audioCtx = null;
+    function iniciarAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function somPulo() {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.exponentialRampToValueAtTime(600, now + 0.15);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.linearRampToValueAtTime(0, now + 0.15);
+        osc.start(now);
+        osc.stop(now + 0.15);
+    }
+
+    function somMoeda() {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(987, now);
+        osc.frequency.setValueAtTime(1318, now + 0.08);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.linearRampToValueAtTime(0, now + 0.35);
+        osc.start(now);
+        osc.stop(now + 0.35);
+    }
+
+    function somStomp() {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(120, now);
+        osc.frequency.linearRampToValueAtTime(40, now + 0.1);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.linearRampToValueAtTime(0, now + 0.1);
+        osc.start(now);
+        osc.stop(now + 0.1);
+    }
+
+    // 2. TECLADO & CONTROLES DO ARCADE
+    const keys = { left: false, right: false, up: false, down: false, run: false };
+
+    function setKey(code, val) {
+        iniciarAudio();
+        if (code === 'ArrowLeft' || code === 'KeyA') keys.left = val;
+        if (code === 'ArrowRight' || code === 'KeyD') keys.right = val;
+        if (code === 'ArrowUp' || code === 'KeyW' || code === 'Space' || code === 'KeyZ') keys.up = val;
+        if (code === 'ArrowDown' || code === 'KeyS') keys.down = val;
+        if (code === 'ShiftLeft' || code === 'KeyX') keys.run = val;
+    }
+
+    window.addEventListener('keydown', (e) => setKey(e.code, true));
+    window.addEventListener('keyup', (e) => setKey(e.code, false));
+
+    // Ponte para mensagens da janela pai (Radish Arcade)
+    window.addEventListener('message', (e) => {
+        if (e.data && e.data.type) {
+            setKey(e.data.button, e.data.type === 'keydown');
+        }
+    });
+
+    // 3. ESTADO DO MARIO & FÍSICA
+    const mario = {
+        x: 40, y: 180,
+        w: 12, h: 16,
+        vx: 0, vy: 0,
+        noChao: false,
+        direcao: 1,
+        vivo: true,
+        score: 0,
+        moedas: 0
+    };
+
+    let cameraX = 0;
+
+    // MAPA DA FASE 1-1
+    const blocos = [
+        // Chão principal
+        { x: 0, y: 208, w: 900, h: 32, tipo: 'chao' },
+        // Blocos ? e Tijolos clássicos
+        { x: 120, y: 144, w: 16, h: 16, tipo: 'item', coletado: false },
+        { x: 150, y: 144, w: 16, h: 16, tipo: 'tijolo' },
+        { x: 166, y: 144, w: 16, h: 16, tipo: 'item', coletado: false },
+        { x: 182, y: 144, w: 16, h: 16, tipo: 'tijolo' },
+        { x: 198, y: 144, w: 16, h: 16, tipo: 'item', coletado: false },
+        { x: 214, y: 144, w: 16, h: 16, tipo: 'tijolo' },
+        { x: 182, y: 80, w: 16, h: 16, tipo: 'item', coletado: false },
+        // Canos
+        { x: 280, y: 176, w: 28, h: 32, tipo: 'cano' },
+        { x: 380, y: 160, w: 28, h: 48, tipo: 'cano' },
+        { x: 480, y: 144, w: 28, h: 64, tipo: 'cano' },
+        // Buraco no chão
+        { x: 970, y: 208, w: 600, h: 32, tipo: 'chao' }
+    ];
+
+    // INIMIGOS (GOOMBAS)
+    const goombas = [
+        { x: 220, y: 192, w: 16, h: 16, vx: -0.6, vivo: true },
+        { x: 340, y: 192, w: 16, h: 16, vx: -0.6, vivo: true },
+        { x: 530, y: 192, w: 16, h: 16, vx: -0.6, vivo: true }
+    ];
+
+    // 4. ATUALIZAÇÃO DA FÍSICA
+    function update() {
+        if (!mario.vivo) return;
+
+        // Movimento Horizontal
+        const maxVel = keys.run ? 2.5 : 1.6;
+        const aceleracao = 0.15;
+        const atrito = 0.85;
+
+        if (keys.left) {
+            mario.vx -= aceleracao;
+            mario.direcao = -1;
+        } else if (keys.right) {
+            mario.vx += aceleracao;
+            mario.direcao = 1;
+        } else {
+            mario.vx *= atrito;
+        }
+
+        mario.vx = Math.max(-maxVel, Math.min(maxVel, mario.vx));
+        mario.x += mario.vx;
+
+        // Colisão Horizontal com Blocos e Canos
+        blocos.forEach(b => {
+            if (mario.x < b.x + b.w && mario.x + mario.w > b.x &&
+                mario.y < b.y + b.h && mario.y + mario.h > b.y) {
+                if (mario.vx > 0) mario.x = b.x - mario.w;
+                else if (mario.vx < 0) mario.x = b.x + b.w;
+                mario.vx = 0;
+            }
+        });
+
+        // Gravidade e Pulo
+        mario.vy += 0.28; // gravidade
+        mario.y += mario.vy;
+        mario.noChao = false;
+
+        // Colisão Vertical com Blocos
+        blocos.forEach(b => {
+            if (mario.x < b.x + b.w && mario.x + mario.w > b.x &&
+                mario.y < b.y + b.h && mario.y + mario.h > b.y) {
+                if (mario.vy > 0) { // Caindo
+                    mario.y = b.y - mario.h;
+                    mario.vy = 0;
+                    mario.noChao = true;
+                } else if (mario.vy < 0) { // Batendo de cabeça
+                    mario.y = b.y + b.h;
+                    mario.vy = 0;
+                    if (b.tipo === 'item' && !b.coletado) {
+                        b.coletado = true;
+                        mario.moedas++;
+                        mario.score += 200;
+                        somMoeda();
+                    }
+                }
+            }
+        });
+
+        // Pular
+        if (keys.up && mario.noChao) {
+            mario.vy = -6.2;
+            mario.noChao = false;
+            somPulo();
+        }
+
+        // Queda no buraco
+        if (mario.y > 240) {
+            mario.vivo = false;
+            setTimeout(() => { mario.x = 40; mario.y = 180; mario.vx = 0; mario.vy = 0; mario.vivo = true; }, 1000);
+        }
+
+        // Atualização e colisão dos Goombas
+        goombas.forEach(g => {
+            if (!g.vivo) return;
+            g.x += g.vx;
+
+            // Inverte ao bater nos canos
+            blocos.forEach(b => {
+                if (b.tipo === 'cano' && g.x < b.x + b.w && g.x + g.w > b.x && g.y < b.y + b.h && g.y + g.h > b.y) {
+                    g.vx *= -1;
+                }
+            });
+
+            // Colisão do Mario com o Goomba
+            if (mario.x < g.x + g.w && mario.x + mario.w > g.x &&
+                mario.y < g.y + g.h && mario.y + mario.h > g.y) {
+                if (mario.vy > 0 && mario.y + mario.h - mario.vy <= g.y + 6) { // Pisou no monstro
+                    g.vivo = false;
+                    mario.vy = -4;
+                    mario.score += 100;
+                    somStomp();
+                } else { // Tomou dano
+                    mario.vivo = false;
+                    setTimeout(() => { mario.x = 40; mario.y = 180; mario.vx = 0; mario.vy = 0; mario.vivo = true; }, 1000);
+                }
+            }
+        });
+
+        // Câmera acompanha o Mario
+        if (mario.x - cameraX > 120) {
+            cameraX = mario.x - 120;
+        }
+    }
+
+    // 5. RENDERIZAÇÃO GRÁFICA (PIXEL ART RETRÔ)
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.translate(-cameraX, 0);
+
+        // Nuvens e arbustos de fundo
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(80, 40, 32, 16);
+        ctx.fillRect(300, 30, 40, 16);
+        ctx.fillRect(520, 45, 32, 16);
+
+        // Desenhar Blocos
+        blocos.forEach(b => {
+            if (b.tipo === 'chao') {
+                ctx.fillStyle = '#d88b28';
+                ctx.fillRect(b.x, b.y, b.w, b.h);
+                ctx.fillStyle = '#fcb47c';
+                ctx.fillRect(b.x, b.y, b.w, 4);
+            } else if (b.tipo === 'tijolo') {
+                ctx.fillStyle = '#b84418';
+                ctx.fillRect(b.x, b.y, b.w, b.h);
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(b.x, b.y, b.w, b.h);
+            } else if (b.tipo === 'item') {
+                ctx.fillStyle = b.coletado ? '#949494' : '#fcb42c';
+                ctx.fillRect(b.x, b.y, b.w, b.h);
+                ctx.strokeStyle = '#000';
+                ctx.strokeRect(b.x, b.y, b.w, b.h);
+                if (!b.coletado) {
+                    ctx.fillStyle = '#000';
+                    ctx.font = 'bold 10px monospace';
+                    ctx.fillText('?', b.x + 4, b.y + 12);
+                }
+            } else if (b.tipo === 'cano') {
+                ctx.fillStyle = '#00a800';
+                ctx.fillRect(b.x, b.y, b.w, b.h);
+                ctx.fillStyle = '#80d010';
+                ctx.fillRect(b.x + 3, b.y, 4, b.h);
+                ctx.strokeStyle = '#000';
+                ctx.strokeRect(b.x, b.y, b.w, b.h);
+            }
+        });
+
+        // Desenhar Inimigos (Goombas)
+        goombas.forEach(g => {
+            if (g.vivo) {
+                ctx.fillStyle = '#a84000';
+                ctx.fillRect(g.x, g.y, g.w, g.h);
+                ctx.fillStyle = '#fcb47c';
+                ctx.fillRect(g.x + 2, g.y + 10, 12, 6);
+                ctx.fillStyle = '#000';
+                ctx.fillRect(g.x + 3, g.y + 4, 3, 4);
+                ctx.fillRect(g.x + 10, g.y + 4, 3, 4);
+            }
+        });
+
+        // Desenhar o Mario Clássico
+        if (mario.vivo) {
+            ctx.fillStyle = '#d82800'; // Macacão Vermelho
+            ctx.fillRect(mario.x, mario.y, mario.w, mario.h);
+            ctx.fillStyle = '#887000'; // Boné e Cabelo Castanho
+            ctx.fillRect(mario.x + (mario.direcao === 1 ? 2 : 0), mario.y, 10, 4);
+            ctx.fillStyle = '#fcb47c'; // Rosto Cor de Pele
+            ctx.fillRect(mario.x + (mario.direcao === 1 ? 4 : 1), mario.y + 4, 7, 5);
+            ctx.fillStyle = '#0028a0'; // Detalhe Azul
+            ctx.fillRect(mario.x + 2, mario.y + 9, 8, 4);
+        }
+
+        ctx.restore();
+
+        // 6. HUD (PLACAR FIXO NA TELA)
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 10px monospace';
+        ctx.fillText('MARIO', 20, 15);
+        ctx.fillText(String(mario.score).padStart(6, '0'), 20, 26);
+
+        ctx.fillText('MOEDAS', 95, 15);
+        ctx.fillText('x' + String(mario.moedas).padStart(2, '0'), 105, 26);
+
+        ctx.fillText('MUNDO', 165, 15);
+        ctx.fillText('1-1', 172, 26);
+
+        ctx.fillText('TEMPO', 220, 15);
+        ctx.fillText('375', 225, 26);
+    }
+
+    // LOOP PRINCIPAL
+    function loop() {
+        update();
+        draw();
+        requestAnimationFrame(loop);
+    }
+    loop();
+</script>
+</body>
+</html>
