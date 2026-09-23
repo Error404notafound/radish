@@ -1338,12 +1338,14 @@
             </div>
 
             <div class="arcade-buttons-grid">
-                <button class="arc-btn arc-green" onclick="simularTecla('KeyZ')">A1</button>
+                <!-- A1 (Verde): Pulo no jogo / Abre Menu na Pausa -->
+                <button class="arc-btn arc-green" onclick="acaoBotaoA1(event)">A1</button>
                 <button class="arc-btn arc-blue" onclick="simularTecla('KeyX')">A2</button>
                 <button class="arc-btn arc-black" onclick="simularTecla('KeyC')">A3</button>
                 <button class="arc-btn arc-black" onclick="simularTecla('ShiftLeft')">S1</button>
                 <button class="arc-btn arc-red" onclick="simularTecla('Space')">A4</button>
-                <button class="arc-btn arc-yellow" onclick="simularTecla('KeyA')">A5</button>
+                <!-- A5 (Amarelo): Pause no jogo / ENTER dentro do Menu -->
+                <button class="arc-btn arc-yellow" onclick="acaoBotaoA5(event)">A5</button>
                 <button class="arc-btn arc-black" onclick="simularTecla('KeyS')">A6</button>
                 <button class="arc-btn arc-black" onclick="simularTecla('Enter')">S2</button>
             </div>
@@ -1501,12 +1503,27 @@
         // ENGINE FLAPPY BIRD AJUSTADA (MAIS FÁCIL + REVIVE + MÚSICAS)
         // =================================================================
 
+        // =================================================================
+        // ENGINE FLAPPY BIRD COM PAUSE, MENU E NAVEGAÇÃO POR JOYSTICK
+        // =================================================================
+
         let flappyAtivo = false;
         let audioCtx = null;
         let highScore = parseInt(localStorage.getItem('radish_flappy_high')) || 0;
         let invencivelAte = 0;
 
-        // 1. Áudios das músicas do GitHub (Links raw diretos)
+        // Configurações do Menu (Baseado nos prints)
+        let configFlappy = {
+            dificuldade: 'easy',       // 'easy', 'normal', 'hard'
+            mutado: false,              // true, false
+            autoRestart: false          // true, false
+        };
+
+        // Estado do Menu e Seleção da Setinha
+        let menuCursorIndex = 0; // 0: difficulty, 1: mute, 2: auto restart
+        const menuOpcoes = ['dificulty', 'mute', 'autoRestart'];
+
+        // Áudios das músicas do GitHub
         const bgmJogo = new Audio("https://raw.githubusercontent.com/Error404notafound/radish/main/little-toy-piano%20%5Busesuno.com%5D.mp3");
         bgmJogo.loop = true;
         bgmJogo.volume = 0.4;
@@ -1521,8 +1538,8 @@
             bgmGameOver.currentTime = 0;
         }
 
-        // Efeitos sonoros dos saltos e pontos
         function tocarSom(tipo) {
+            if (configFlappy.mutado) return;
             try {
                 if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -1556,11 +1573,10 @@
         const canvas = document.getElementById('flappyCanvas');
         const ctx = canvas ? canvas.getContext('2d') : null;
 
-        // FÍSICA AJUSTADA: gravidade bem mais leve (0.16) e queda suave
         let passaro = { x: 55, y: 110, v: 0, g: 0.16, pulo: -3.8, r: 11 };
         let canos = [];
         let score = 0;
-        let estadoJogo = 'menu';
+        let estadoJogo = 'menu_inicial'; // 'menu_inicial', 'jogando', 'pause', 'menu_config', 'gameover'
         let frameCount = 0;
 
         function resetarFlappy() {
@@ -1571,28 +1587,26 @@
             frameCount = 0;
             estadoJogo = 'jogando';
             pararMusicas();
-            bgmJogo.play().catch(() => {});
+            if (!configFlappy.mutado) bgmJogo.play().catch(() => {});
         }
 
-        // Função de Reviver no mesmo lugar sem zerar o score
         function reviverFlappy() {
             passaro.y = Math.max(50, Math.min(canvas.height - 70, passaro.y));
             passaro.v = -2;
             estadoJogo = 'jogando';
-            invencivelAte = Date.now() + 1500; // 1.5 segundo sem bater nos canos
+            invencivelAte = Date.now() + 1500;
             pararMusicas();
-            bgmJogo.play().catch(() => {});
+            if (!configFlappy.mutado) bgmJogo.play().catch(() => {});
             tocarSom('pulo');
         }
 
         function pularPassaro() {
-            if (estadoJogo === 'menu') {
+            if (estadoJogo === 'menu_inicial') {
                 resetarFlappy();
                 tocarSom('pulo');
                 return;
             }
             if (estadoJogo === 'gameover') {
-                // Se morreu, um toque no botão revive
                 reviverFlappy();
                 return;
             }
@@ -1603,46 +1617,130 @@
         }
 
         function morrer() {
+            if (configFlappy.autoRestart) {
+                resetarFlappy();
+                return;
+            }
             estadoJogo = 'gameover';
             pararMusicas();
-            bgmGameOver.play().catch(() => {});
+            if (!configFlappy.mutado) bgmGameOver.play().catch(() => {});
         }
 
+        // AÇÕES DO BOTÃO A5 (AMARELO): PAUSE / ENTER
+        function acaoBotaoA5(e) {
+            if (e) e.preventDefault();
+
+            if (!flappyAtivo) {
+                simularTecla('KeyA');
+                return;
+            }
+
+            // Se estiver jogando -> Pausa
+            if (estadoJogo === 'jogando') {
+                estadoJogo = 'pause';
+                bgmJogo.pause();
+                return;
+            }
+            // Se estiver pausado -> Despausa
+            if (estadoJogo === 'pause') {
+                estadoJogo = 'jogando';
+                if (!configFlappy.mutado) bgmJogo.play().catch(() => {});
+                return;
+            }
+            // Se estiver no MENU DE CONFIGURAÇÕES -> Vira o botão ENTER
+            if (estadoJogo === 'menu_config') {
+                alternarOpcaoMenu();
+            }
+        }
+
+        // AÇÕES DO BOTÃO A1 (VERDE): PULO / ABRIR MENU
+        function acaoBotaoA1(e) {
+            if (e) e.preventDefault();
+
+            if (!flappyAtivo) {
+                simularTecla('KeyZ');
+                return;
+            }
+
+            // Se estiver na tela de PAUSE e apertar A1 -> Abre o MENU
+            if (estadoJogo === 'pause') {
+                estadoJogo = 'menu_config';
+                menuCursorIndex = 0;
+                return;
+            }
+            // Se estiver no MENU DE CONFIGURAÇÕES e apertar A1 -> Volta para o jogo (continue)
+            if (estadoJogo === 'menu_config') {
+                estadoJogo = 'jogando';
+                if (!configFlappy.mutado) bgmJogo.play().catch(() => {});
+                return;
+            }
+
+            pularPassaro();
+        }
+
+        // Altera a opção selecionada pela setinha no Menu (Ação do ENTER no A5)
+        function alternarOpcaoMenu() {
+            if (menuCursorIndex === 0) {
+                if (configFlappy.dificuldade === 'easy') configFlappy.dificuldade = 'normal';
+                else if (configFlappy.dificuldade === 'normal') configFlappy.dificuldade = 'hard';
+                else configFlappy.dificuldade = 'easy';
+            } else if (menuCursorIndex === 1) {
+                configFlappy.mutado = !configFlappy.mutado;
+                if (configFlappy.mutado) pararMusicas();
+            } else if (menuCursorIndex === 2) {
+                configFlappy.autoRestart = !configFlappy.autoRestart;
+            }
+        }
+
+        // Navegação da Setinha Vermelha com o Joystick Analógico
+        function navegarMenuFlappy(direcao) {
+            if (estadoJogo !== 'menu_config') return;
+
+            if (direcao === 'ArrowUp') {
+                menuCursorIndex = (menuCursorIndex - 1 + menuOpcoes.length) % menuOpcoes.length;
+            } else if (direcao === 'ArrowDown') {
+                menuCursorIndex = (menuCursorIndex + 1) % menuOpcoes.length;
+            }
+        }
+
+        // LOOP PRINCIPAL DO JOGO
         function loopFlappy() {
             if (!flappyAtivo || !ctx) return;
 
-            // 1. Céu Azul
+            // 1. Fundo Céu
             ctx.fillStyle = '#4ec0ca';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Skyline de prédios ao fundo
+            // Prédios ao fundo
             ctx.fillStyle = '#b7e4e0';
             ctx.fillRect(0, 160, canvas.width, 70);
             ctx.fillStyle = '#8ad2cc';
             ctx.fillRect(30, 140, 40, 90);
             ctx.fillRect(90, 120, 50, 110);
             ctx.fillRect(170, 135, 60, 95);
-            ctx.fillRect(250, 115, 45, 115);
 
+            // Parâmetros de Dificuldade
+            let espacoCanos = 115;
+            let velCanos = 1.8;
+            if (configFlappy.dificuldade === 'normal') { espacoCanos = 95; velCanos = 2.3; }
+            if (configFlappy.dificuldade === 'hard') { espacoCanos = 80; velCanos = 2.8; }
+
+            // Lógica durante a partida ativa
             if (estadoJogo === 'jogando') {
                 frameCount++;
                 passaro.v += passaro.g;
-                // Limite de velocidade de queda para não cair rápido demais
                 if (passaro.v > 4.2) passaro.v = 4.2;
                 passaro.y += passaro.v;
 
-                // ESPAÇO ENTRE OS CANOS BEM MAIOR (Vão vertical de 115px e intervalo mais distante de 105 frames)
-                if (frameCount % 105 === 0) {
-                    const espaco = 115; // Vão bem mais largo para passar com folga
-                    const topo = Math.floor(Math.random() * (canvas.height - espaco - 70)) + 25;
-                    canos.push({ x: canvas.width, topo: topo, fundo: topo + espaco, passou: false });
+                if (frameCount % 100 === 0) {
+                    const topo = Math.floor(Math.random() * (canvas.height - espacoCanos - 70)) + 25;
+                    canos.push({ x: canvas.width, topo: topo, fundo: topo + espacoCanos, passou: false });
                 }
 
                 const ehInvencivel = Date.now() < invencivelAte;
 
-                // Mover Canos e Colisões
                 for (let i = canos.length - 1; i >= 0; i--) {
-                    canos[i].x -= 1.8;
+                    canos[i].x -= velCanos;
 
                     // Cano Superior
                     ctx.fillStyle = '#73bf2e';
@@ -1650,17 +1748,13 @@
                     ctx.strokeStyle = '#558022';
                     ctx.lineWidth = 3;
                     ctx.strokeRect(canos[i].x, 0, 42, canos[i].topo);
-                    ctx.fillRect(canos[i].x - 2, canos[i].topo - 14, 46, 14);
-                    ctx.strokeRect(canos[i].x - 2, canos[i].topo - 14, 46, 14);
 
                     // Cano Inferior
                     ctx.fillStyle = '#73bf2e';
                     ctx.fillRect(canos[i].x, canos[i].fundo, 42, canvas.height - canos[i].fundo - 30);
                     ctx.strokeRect(canos[i].x, canos[i].fundo, 42, canvas.height - canos[i].fundo - 30);
-                    ctx.fillRect(canos[i].x - 2, canos[i].fundo, 46, 14);
-                    ctx.strokeRect(canos[i].x - 2, canos[i].fundo, 46, 14);
 
-                    // Detecção de Colisão com os Canos
+                    // Colisão
                     if (!ehInvencivel && passaro.x + passaro.r > canos[i].x && passaro.x - passaro.r < canos[i].x + 42) {
                         if (passaro.y - passaro.r < canos[i].topo || passaro.y + passaro.r > canos[i].fundo) {
                             morrer();
@@ -1681,10 +1775,18 @@
                     if (canos[i].x < -50) canos.splice(i, 1);
                 }
 
-                // Colisão com o chão
                 if (passaro.y + passaro.r >= canvas.height - 30) {
                     passaro.y = canvas.height - 30 - passaro.r;
                     morrer();
+                }
+            } else {
+                // Desenha os canos congelados se estiver em Pause ou Menu
+                for (let i = 0; i < canos.length; i++) {
+                    ctx.fillStyle = '#73bf2e';
+                    ctx.fillRect(canos[i].x, 0, 42, canos[i].topo);
+                    ctx.strokeRect(canos[i].x, 0, 42, canos[i].topo);
+                    ctx.fillRect(canos[i].x, canos[i].fundo, 42, canvas.height - canos[i].fundo - 30);
+                    ctx.strokeRect(canos[i].x, canos[i].fundo, 42, canvas.height - canos[i].fundo - 30);
                 }
             }
 
@@ -1697,13 +1799,12 @@
             ctx.lineWidth = 2;
             ctx.strokeRect(0, canvas.height - 30, canvas.width, 6);
 
-            // 3. Pássaro Amarelo com efeito de piscar se estiver invencível
+            // 3. Pássaro Amarelo
             ctx.save();
             ctx.translate(passaro.x, passaro.y);
             if (Date.now() < invencivelAte && Math.floor(Date.now() / 100) % 2 === 0) {
                 ctx.globalAlpha = 0.4;
             }
-
             const angulo = Math.min(Math.PI / 4, Math.max(-Math.PI / 4, (passaro.v * 0.12)));
             ctx.rotate(angulo);
 
@@ -1717,7 +1818,6 @@
 
             ctx.fillStyle = '#fff';
             ctx.fillRect(-7, -2, 8, 5);
-
             ctx.fillStyle = '#e86101';
             ctx.fillRect(4, 1, 9, 6);
             ctx.strokeRect(4, 1, 9, 6);
@@ -1727,14 +1827,13 @@
             ctx.arc(4, -4, 4.5, 0, Math.PI * 2);
             ctx.fill();
             ctx.stroke();
-
             ctx.fillStyle = '#000';
             ctx.beginPath();
             ctx.arc(5, -4, 1.8, 0, Math.PI * 2);
             ctx.fill();
             ctx.restore();
 
-            // 4. Placar Durante o Jogo
+            // Placar Jogando
             if (estadoJogo === 'jogando') {
                 ctx.fillStyle = '#ffffff';
                 ctx.font = '900 32px Inter, sans-serif';
@@ -1745,22 +1844,152 @@
                 ctx.fillText(score, canvas.width / 2, 45);
             }
 
-            // 5. Menu Inicial
-            if (estadoJogo === 'menu') {
+            // Menu Inicial
+            if (estadoJogo === 'menu_inicial') {
                 ctx.fillStyle = '#ffffff';
                 ctx.font = '800 20px Inter, sans-serif';
                 ctx.textAlign = 'center';
-                ctx.strokeStyle = '#000000';
+                ctx.strokeStyle = '#000';
                 ctx.lineWidth = 3;
                 ctx.strokeText('TOQUE PARA JOGAR', canvas.width / 2, 80);
                 ctx.fillText('TOQUE PARA JOGAR', canvas.width / 2, 80);
-
-                ctx.font = '600 12px Inter, sans-serif';
-                ctx.fillStyle = 'rgba(0,0,0,0.6)';
-                ctx.fillText('Use a tela, botão A1 ou joystick', canvas.width / 2, 105);
             }
 
-            // 6. Tela de Game Over com Botões REVIVE e PLAY
+            // 4. TELA DE PAUSE (Idêntica aos prints 1 e 2)
+            if (estadoJogo === 'pause') {
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#ff2b2b';
+                ctx.font = '900 28px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 3;
+                ctx.strokeText('PAUSE', canvas.width / 2, 34);
+                ctx.fillText('PAUSE', canvas.width / 2, 34);
+
+                // Cartão Bege Placar
+                ctx.fillStyle = '#e9dcaf';
+                ctx.fillRect(canvas.width / 2 - 95, 42, 190, 85);
+                ctx.strokeStyle = '#543847';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(canvas.width / 2 - 95, 42, 190, 85);
+
+                ctx.fillStyle = '#e06f53';
+                ctx.font = '800 11px Inter, sans-serif';
+                ctx.fillText('SCORE', canvas.width / 2 - 45, 60);
+                ctx.fillStyle = '#000';
+                ctx.font = '900 22px Inter, sans-serif';
+                ctx.fillText(score, canvas.width / 2 - 45, 84);
+
+                ctx.fillStyle = '#e06f53';
+                ctx.font = '800 11px Inter, sans-serif';
+                ctx.fillText('HIGH SCORE', canvas.width / 2 + 45, 60);
+                ctx.fillStyle = '#000';
+                ctx.font = '900 22px Inter, sans-serif';
+                ctx.fillText(highScore, canvas.width / 2 + 45, 84);
+
+                // Botão start over (Azul)
+                ctx.fillStyle = '#1d4ed8';
+                ctx.fillRect(canvas.width / 2 - 92, 134, 88, 26);
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(canvas.width / 2 - 92, 134, 88, 26);
+                ctx.fillStyle = '#fff';
+                ctx.font = '800 11px Inter, sans-serif';
+                ctx.fillText('start over', canvas.width / 2 - 48, 151);
+
+                // Botão menu (Verde - A1 também ativa)
+                ctx.fillStyle = '#16a34a';
+                ctx.fillRect(canvas.width / 2 + 4, 134, 88, 26);
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(canvas.width / 2 + 4, 134, 88, 26);
+                ctx.fillStyle = '#fff';
+                ctx.font = '800 11px Inter, sans-serif';
+                ctx.fillText('menu', canvas.width / 2 + 48, 151);
+
+                // Botão continue (Vermelho)
+                ctx.fillStyle = '#dc2626';
+                ctx.fillRect(canvas.width / 2 - 45, 166, 90, 24);
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(canvas.width / 2 - 45, 166, 90, 24);
+                ctx.fillStyle = '#fff';
+                ctx.font = '800 11px Inter, sans-serif';
+                ctx.fillText('continue', canvas.width / 2, 182);
+            }
+
+            // 5. TELA DE MENU / CONFIGURAÇÕES COM A SETINHA (Idêntica aos prints 3, 4, 5, 6)
+            if (estadoJogo === 'menu_config') {
+                ctx.fillStyle = 'rgba(0,0,0,0.45)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#ff2b2b';
+                ctx.font = '900 26px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 3;
+                ctx.strokeText('MENU', canvas.width / 2, 32);
+                ctx.fillText('MENU', canvas.width / 2, 32);
+
+                // Caixa Bege do Menu
+                ctx.fillStyle = '#e9dcaf';
+                ctx.fillRect(canvas.width / 2 - 95, 42, 190, 85);
+                ctx.strokeStyle = '#543847';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(canvas.width / 2 - 95, 42, 190, 85);
+
+                ctx.fillStyle = '#000';
+                ctx.font = '700 11px Inter, sans-serif';
+                ctx.textAlign = 'left';
+
+                const posX = canvas.width / 2 - 75;
+                const setasY = [62, 85, 108];
+
+                // Textos das Opções
+                ctx.fillText(`dificulty :   ${configFlappy.dificuldade}`, posX, 64);
+                ctx.fillText(`mute:   ${configFlappy.mutado ? 'on' : 'off'}`, posX, 87);
+                ctx.fillText(`automatically restart:  ${configFlappy.autoRestart ? 'yes' : 'no'}`, posX, 110);
+
+                // Setinha Vermelha Navegável (▶)
+                ctx.fillStyle = '#dc2626';
+                ctx.font = '900 14px Inter, sans-serif';
+                ctx.fillText('▶', posX - 15, setasY[menuCursorIndex]);
+
+                // Botão start over (Azul)
+                ctx.fillStyle = '#1d4ed8';
+                ctx.fillRect(canvas.width / 2 - 92, 134, 88, 26);
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(canvas.width / 2 - 92, 134, 88, 26);
+                ctx.fillStyle = '#fff';
+                ctx.font = '800 11px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('start over', canvas.width / 2 - 48, 151);
+
+                // Botão menu (Verde)
+                ctx.fillStyle = '#16a34a';
+                ctx.fillRect(canvas.width / 2 + 4, 134, 88, 26);
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(canvas.width / 2 + 4, 134, 88, 26);
+                ctx.fillStyle = '#fff';
+                ctx.font = '800 11px Inter, sans-serif';
+                ctx.fillText('menu', canvas.width / 2 + 48, 151);
+
+                // Botão continue (Vermelho)
+                ctx.fillStyle = '#dc2626';
+                ctx.fillRect(canvas.width / 2 - 45, 166, 90, 24);
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(canvas.width / 2 - 45, 166, 90, 24);
+                ctx.fillStyle = '#fff';
+                ctx.font = '800 11px Inter, sans-serif';
+                ctx.fillText('continue', canvas.width / 2, 182);
+            }
+
+            // 6. TELA GAME OVER
             if (estadoJogo === 'gameover') {
                 ctx.fillStyle = 'rgba(0,0,0,0.45)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -1773,7 +2002,6 @@
                 ctx.strokeText('GAME OVER', canvas.width / 2, 36);
                 ctx.fillText('GAME OVER', canvas.width / 2, 36);
 
-                // Cartão Bege
                 ctx.fillStyle = '#e9dcaf';
                 ctx.fillRect(canvas.width / 2 - 95, 45, 190, 110);
                 ctx.strokeStyle = '#543847';
@@ -1794,39 +2022,21 @@
                 ctx.font = '900 24px Inter, sans-serif';
                 ctx.fillText(highScore, canvas.width / 2 + 45, 96);
 
-                ctx.fillStyle = '#e06f53';
-                ctx.font = '700 10px Inter, sans-serif';
-                ctx.fillText('MEDAL', canvas.width / 2 - 45, 130);
-                ctx.fillStyle = score >= 5 ? '#f59e0b' : '#c8b496';
-                ctx.beginPath();
-                ctx.arc(canvas.width / 2 + 45, 130, 12, 0, Math.PI * 2);
-                ctx.fill();
-
-                // BOTÃO REVIVE (Amarelo, idêntico ao seu print 3)
-                ctx.fillStyle = '#eab308';
-                ctx.fillRect(canvas.width / 2 - 90, 165, 85, 30);
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 2;
-                ctx.strokeRect(canvas.width / 2 - 90, 165, 85, 30);
-                ctx.fillStyle = '#000';
-                ctx.font = '900 12px Inter, sans-serif';
-                ctx.fillText('REVIVE', canvas.width / 2 - 47, 185);
-
-                // BOTÃO PLAY (Verde - Reinício do zero)
+                // Botão PLAY
                 ctx.fillStyle = '#22c55e';
-                ctx.fillRect(canvas.width / 2 + 5, 165, 85, 30);
+                ctx.fillRect(canvas.width / 2 - 45, 165, 90, 30);
                 ctx.strokeStyle = '#fff';
                 ctx.lineWidth = 2;
-                ctx.strokeRect(canvas.width / 2 + 5, 165, 85, 30);
+                ctx.strokeRect(canvas.width / 2 - 45, 165, 90, 30);
                 ctx.fillStyle = '#fff';
                 ctx.font = '900 12px Inter, sans-serif';
-                ctx.fillText('PLAY', canvas.width / 2 + 47, 185);
+                ctx.fillText('PLAY', canvas.width / 2, 185);
             }
 
             requestAnimationFrame(loopFlappy);
         }
 
-        // Clique no Canvas com suporte para clicar nos botões REVIVE ou PLAY
+        // Toque na tela (Canvas) suportando os botões desenhados
         if (canvas) {
             canvas.addEventListener('mousedown', tratarCliqueCanvas);
             canvas.addEventListener('touchstart', (e) => {
@@ -1836,24 +2046,40 @@
         }
 
         function tratarCliqueCanvas(e) {
-            if (estadoJogo === 'gameover') {
-                const rect = canvas.getBoundingClientRect();
-                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                const clickX = (clientX - rect.left) * (canvas.width / rect.width);
-                const clickY = (clientY - rect.top) * (canvas.height / rect.height);
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            const clickX = (clientX - rect.left) * (canvas.width / rect.width);
+            const clickY = (clientY - rect.top) * (canvas.height / rect.height);
 
-                // Clique na área do botão REVIVE (Esquerda)
-                if (clickY >= 165 && clickY <= 195 && clickX >= canvas.width / 2 - 90 && clickX <= canvas.width / 2 - 5) {
-                    reviverFlappy();
-                    return;
-                }
-                // Clique na área do botão PLAY (Direita)
-                if (clickY >= 165 && clickY <= 195 && clickX >= canvas.width / 2 + 5 && clickX <= canvas.width / 2 + 90) {
+            // Se estiver em PAUSE ou MENU
+            if (estadoJogo === 'pause' || estadoJogo === 'menu_config') {
+                // start over
+                if (clickY >= 134 && clickY <= 160 && clickX >= canvas.width / 2 - 92 && clickX <= canvas.width / 2 - 4) {
                     resetarFlappy();
                     return;
                 }
+                // menu
+                if (clickY >= 134 && clickY <= 160 && clickX >= canvas.width / 2 + 4 && clickX <= canvas.width / 2 + 92) {
+                    estadoJogo = (estadoJogo === 'pause') ? 'menu_config' : 'pause';
+                    return;
+                }
+                // continue
+                if (clickY >= 166 && clickY <= 190 && clickX >= canvas.width / 2 - 45 && clickX <= canvas.width / 2 + 45) {
+                    estadoJogo = 'jogando';
+                    if (!configFlappy.mutado) bgmJogo.play().catch(() => {});
+                    return;
+                }
+
+                // Cliques diretos nas opções do Menu
+                if (estadoJogo === 'menu_config' && clickX >= canvas.width / 2 - 95 && clickX <= canvas.width / 2 + 95) {
+                    if (clickY >= 50 && clickY < 75) { menuCursorIndex = 0; alternarOpcaoMenu(); }
+                    else if (clickY >= 75 && clickY < 98) { menuCursorIndex = 1; alternarOpcaoMenu(); }
+                    else if (clickY >= 98 && clickY <= 125) { menuCursorIndex = 2; alternarOpcaoMenu(); }
+                    return;
+                }
             }
+
             pularPassaro();
         }
 
@@ -1866,7 +2092,7 @@
                 iframe.style.display = 'none';
                 flappy.style.display = 'block';
                 flappyAtivo = true;
-                estadoJogo = 'menu';
+                estadoJogo = 'menu_inicial';
                 loopFlappy();
             } else {
                 flappy.style.display = 'none';
@@ -1908,6 +2134,8 @@
 
         let joystickPuloCooldown = false;
 
+        let joystickMenuCooldown = false;
+
         function handleJoystick(e) {
             if (!drag || !base || !thumb) return;
             const rect = base.getBoundingClientRect();
@@ -1920,6 +2148,20 @@
             const angle = Math.atan2(dy, dx);
 
             thumb.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px)`;
+
+            // Navegação no Menu de Configurações com o Joystick
+            if (flappyAtivo && estadoJogo === 'menu_config' && !joystickMenuCooldown) {
+                if (dy < -16) {
+                    navegarMenuFlappy('ArrowUp');
+                    joystickMenuCooldown = true;
+                    setTimeout(() => { joystickMenuCooldown = false; }, 220);
+                } else if (dy > 16) {
+                    navegarMenuFlappy('ArrowDown');
+                    joystickMenuCooldown = true;
+                    setTimeout(() => { joystickMenuCooldown = false; }, 220);
+                }
+            }
+        }
 
             // Se empurrar o analógico para cima no Flappy Bird, o pássaro voa
             if (flappyAtivo && dy < -15 && !joystickPuloCooldown) {
