@@ -2149,7 +2149,7 @@
 
             thumb.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px)`;
 
-            // Navegação no Menu de Configurações com o Joystick
+            // 1. Navegação no Menu de Configurações com o Joystick
             if (flappyAtivo && estadoJogo === 'menu_config' && !joystickMenuCooldown) {
                 if (dy < -16) {
                     navegarMenuFlappy('ArrowUp');
@@ -2161,10 +2161,9 @@
                     setTimeout(() => { joystickMenuCooldown = false; }, 220);
                 }
             }
-        }
 
-            // Se empurrar o analógico para cima no Flappy Bird, o pássaro voa
-            if (flappyAtivo && dy < -15 && !joystickPuloCooldown) {
+            // 2. Se empurrar o analógico para cima durante o jogo, o pássaro pula
+            if (flappyAtivo && estadoJogo === 'jogando' && dy < -15 && !joystickPuloCooldown) {
                 pularPassaro();
                 joystickPuloCooldown = true;
                 setTimeout(() => { joystickPuloCooldown = false; }, 200);
