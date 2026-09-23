@@ -2443,47 +2443,6 @@
             lucide.createIcons();
         }
 
-            // 3. Renderizar os outros jogos vindos do Firebase logo em seguida
-            jogos.forEach((jogo, index) => {
-                // Evita duplicar se já houver um jogo chamado Flappy Bird no Firebase
-                if (jogo.titulo && jogo.titulo.toLowerCase().includes('flappy')) return;
-
-                const capa = jogo.cover || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400&auto=format&fit=crop';
-                
-                listaNovos.innerHTML += `
-                    <div class="game-card" onclick="abrirContainerJogo('${jogo.embedUrl}', '${jogo.titulo}', '${capa}')">
-                        <div class="poster-wrapper">
-                            <img class="poster-img" src="${capa}" loading="lazy" alt="${jogo.titulo}">
-                            <span class="badge-status">Novo</span>
-                            <span class="badge-type">HTML5</span>
-                        </div>
-                        <div class="game-info">
-                            <div class="game-title">${jogo.titulo}</div>
-                            <div class="game-meta">Por ${jogo.autor || 'Anônimo'}</div>
-                        </div>
-                    </div>
-                `;
-
-                if (index < 4) {
-                    listaTop5.innerHTML += `
-                        <div class="game-card top-card" onclick="abrirContainerJogo('${jogo.embedUrl}', '${jogo.titulo}', '${capa}')">
-                            <div class="top-number">${index + 2}</div>
-                            <div class="poster-wrapper">
-                                <img class="poster-img" src="${capa}" loading="lazy" alt="${jogo.titulo}">
-                                <span class="badge-status" style="background:#f59e0b; color:#000;">★ TOP</span>
-                            </div>
-                            <div class="game-info">
-                                <div class="game-title">${jogo.titulo}</div>
-                                <div class="game-meta">Popular</div>
-                            </div>
-                        </div>
-                    `;
-                }
-            });
-
-            lucide.createIcons();
-        }
-
         function filtrarJogos() {
             const termo = document.getElementById('searchInput').value.toLowerCase();
             const filtrados = cacheJogos.filter(j => j.titulo.toLowerCase().includes(termo));
