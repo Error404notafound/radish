@@ -2338,10 +2338,28 @@
             listaNovos.innerHTML = '';
             listaTop5.innerHTML = '';
 
-            // Capa oficial do Flappy Bird fornecida
+            // Capas dos Jogos Fixados
+            const capaMario = "https://images.unsplash.com/photo-1612404730960-5c71577fca11?q=80&w=600&auto=format&fit=crop";
+            const urlMario = "https://joshuaisac.github.io/fullscreenmario/";
+            
             const capaFlappy = "https://m.media-amazon.com/images/M/MV5BN2U3ODIyMmMtOTNhYi00ZTFhLWFhMjctYTE5ZjAwNzRkZmQ4XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg";
 
-            // 1. Inserir o Card do Flappy Bird Nativo em DESTAQUE no início de "Novos jogos"
+            // 1. CARD DO SUPER MARIO BROS (FULL SCREEN MARIO)
+            listaNovos.innerHTML += `
+                <div class="game-card" onclick="abrirContainerJogo('${urlMario}', 'Super Mario Bros', '${capaMario}')">
+                    <div class="poster-wrapper">
+                        <img class="poster-img" src="${capaMario}" loading="lazy" alt="Super Mario Bros">
+                        <span class="badge-status">Clássico</span>
+                        <span class="badge-type" style="background:#ff3b2f;">NES</span>
+                    </div>
+                    <div class="game-info">
+                        <div class="game-title">Super Mario Bros</div>
+                        <div class="game-meta">FullScreenMario</div>
+                    </div>
+                </div>
+            `;
+
+            // 2. CARD DO FLAPPY BIRD NATIVO
             listaNovos.innerHTML += `
                 <div class="game-card" onclick="abrirContainerJogo('flappy', 'Flappy Bird', '${capaFlappy}')">
                     <div class="poster-wrapper">
@@ -2356,10 +2374,24 @@
                 </div>
             `;
 
-            // 2. Inserir o Flappy Bird como #1 no "Top 5"
+            // 3. TOP 5: MARIO EM #1 E FLAPPY BIRD EM #2
+            listaTop5.innerHTML += `
+                <div class="game-card top-card" onclick="abrirContainerJogo('${urlMario}', 'Super Mario Bros', '${capaMario}')">
+                    <div class="top-number">1</div>
+                    <div class="poster-wrapper">
+                        <img class="poster-img" src="${capaMario}" loading="lazy" alt="Super Mario Bros">
+                        <span class="badge-status" style="background:#f59e0b; color:#000;">★ TOP</span>
+                    </div>
+                    <div class="game-info">
+                        <div class="game-title">Super Mario Bros</div>
+                        <div class="game-meta">Em Alta</div>
+                    </div>
+                </div>
+            `;
+
             listaTop5.innerHTML += `
                 <div class="game-card top-card" onclick="abrirContainerJogo('flappy', 'Flappy Bird', '${capaFlappy}')">
-                    <div class="top-number">1</div>
+                    <div class="top-number">2</div>
                     <div class="poster-wrapper">
                         <img class="poster-img" src="${capaFlappy}" loading="lazy" alt="Flappy Bird">
                         <span class="badge-status" style="background:#f59e0b; color:#000;">★ TOP</span>
@@ -2370,6 +2402,46 @@
                     </div>
                 </div>
             `;
+
+            // 4. Renderizar os outros jogos vindos do Firebase logo em seguida
+            jogos.forEach((jogo, index) => {
+                if (jogo.titulo && (jogo.titulo.toLowerCase().includes('flappy') || jogo.titulo.toLowerCase().includes('mario'))) return;
+
+                const capa = jogo.cover || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400&auto=format&fit=crop';
+                
+                listaNovos.innerHTML += `
+                    <div class="game-card" onclick="abrirContainerJogo('${jogo.embedUrl}', '${jogo.titulo}', '${capa}')">
+                        <div class="poster-wrapper">
+                            <img class="poster-img" src="${capa}" loading="lazy" alt="${jogo.titulo}">
+                            <span class="badge-status">Novo</span>
+                            <span class="badge-type">HTML5</span>
+                        </div>
+                        <div class="game-info">
+                            <div class="game-title">${jogo.titulo}</div>
+                            <div class="game-meta">Por ${jogo.autor || 'Anônimo'}</div>
+                        </div>
+                    </div>
+                `;
+
+                if (index < 3) {
+                    listaTop5.innerHTML += `
+                        <div class="game-card top-card" onclick="abrirContainerJogo('${jogo.embedUrl}', '${jogo.titulo}', '${capa}')">
+                            <div class="top-number">${index + 3}</div>
+                            <div class="poster-wrapper">
+                                <img class="poster-img" src="${capa}" loading="lazy" alt="${jogo.titulo}">
+                                <span class="badge-status" style="background:#f59e0b; color:#000;">★ TOP</span>
+                            </div>
+                            <div class="game-info">
+                                <div class="game-title">${jogo.titulo}</div>
+                                <div class="game-meta">Popular</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            lucide.createIcons();
+        }
 
             // 3. Renderizar os outros jogos vindos do Firebase logo em seguida
             jogos.forEach((jogo, index) => {
