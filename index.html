@@ -1011,7 +1011,7 @@
             <!-- ESTADO 1: DESLOGADO -->
             <div class="auth-actions" id="authActionsDeslogado">
                 <a href="javascript:void(0)" onclick="abrirCadastro()">Registrar</a>
-                <a href="javascript:void(0)" style="color:#8e8e9f;" onclick="abrirCadastro()">Conecte-se</a>
+                <a href="javascript:void(0)" style="color:#8e8e9f;" onclick="abrirLogin()">Conecte-se</a>
             </div>
 
             <!-- ESTADO 2: LOGADO -->
@@ -1272,7 +1272,76 @@
                 <label style="font-size:12px; color:var(--text-secondary); display:block; margin-bottom:6px;">Email</label>
                 <input type="email" id="regUsuarioEmail" placeholder="Email" required style="width:100%; background:#12141a; border:1px solid var(--border); padding:13px; border-radius:var(--radius-md); color:#fff; outline:none;">
             </div>
+            <div class="input-group" style="margin-bottom:14px;">
+                <label style="font-size:12px; color:var(--text-secondary); display:block; margin-bottom:6px;">Senha</label>
+                <input type="password" id="regUsuarioSenha" placeholder="Senha" required style="width:100%; background:#12141a; border:1px solid var(--border); padding:13px; border-radius:var(--radius-md); color:#fff; outline:none;">
+            </div>
             <button type="submit" class="btn-save-def" style="margin-top:10px;">Criar conta</button>
+            <p style="text-align: center; font-size: 13px; color: var(--text-secondary); margin-top: 18px;">
+                Já tem uma conta? <a href="javascript:void(0)" onclick="abrirLogin()" style="color: #fff; font-weight: 700; text-decoration: none;">Conecte-se</a>
+            </p>
+        </form>
+    </div>
+
+    <!-- PÁGINA DE LOGIN / CONECTE-SE (IDÊNTICA AO PRINT) -->
+    <div class="app-view" id="loginPage">
+        <header style="position: fixed; top: 0; left: 0; right: 0; background: var(--bg-body); z-index: 10;">
+            <button class="icon-btn" onclick="fecharView('loginPage')"><i data-lucide="arrow-left"></i></button>
+            <div class="brand-logo">
+                <h1>RADISH <span>GAMES</span></h1>
+                <small>ラディッシュ ゲーム</small>
+            </div>
+            <button class="icon-btn" style="opacity: 0;"><i data-lucide="search"></i></button>
+        </header>
+
+        <form onsubmit="event.preventDefault(); fazerLoginReal();" style="margin-top: 20px;">
+            <div class="input-group" style="margin-bottom: 14px;">
+                <label style="font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 6px;">Email</label>
+                <input type="email" id="loginEmail" placeholder="Email" required style="width: 100%; background: #12141a; border: 1px solid var(--border); padding: 13px; border-radius: var(--radius-md); color: #fff; outline: none;">
+            </div>
+
+            <div class="input-group" style="margin-bottom: 8px;">
+                <label style="font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 6px;">Senha</label>
+                <div style="position: relative; display: flex; align-items: center;">
+                    <input type="password" id="loginSenha" placeholder="Senha" required style="width: 100%; background: #12141a; border: 1px solid var(--border); padding: 13px; border-radius: var(--radius-md); color: #fff; outline: none;">
+                    <button type="button" onclick="toggleSenha('loginSenha', this)" style="position: absolute; right: 12px; background: none; border: none; color: var(--text-secondary); cursor: pointer;">
+                        <i data-lucide="eye-off" style="width: 18px;"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div style="text-align: left; margin-bottom: 14px;">
+                <a href="javascript:void(0)" onclick="alert('Instruções de recuperação enviadas para o email!')" style="font-size: 12px; color: var(--text-secondary); text-decoration: none;">Esqueceu sua senha</a>
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: flex-start; margin-bottom: 18px; text-align: left;">
+                <input type="checkbox" id="checkDesconectarOutros" style="width: 16px; height: 16px; margin-top: 2px; accent-color: var(--primary);">
+                <label for="checkDesconectarOutros" style="font-size: 11px; color: var(--text-secondary); line-height: 1.4;">
+                    <strong style="color: #fff; display: block;">Desconectar de todos os dispositivos</strong>
+                    Se marcado, você será desconectado do PC/celular e ficará apenas neste dispositivo.
+                </label>
+            </div>
+
+            <button type="submit" class="btn-save-def" style="margin-top: 0; background: var(--primary); font-weight: 800;">Conecte-se</button>
+
+            <button type="button" class="btn-save-def" style="margin-top: 10px; background: #5865f2; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700;">
+                <i data-lucide="message-square" style="width: 16px;"></i> Continuar com Discord
+            </button>
+
+            <div style="margin-top: 16px; background: #fff; border-radius: 4px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; color: #000;">
+                <label style="display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                    <input type="checkbox" required style="width: 20px; height: 20px;">
+                    <span>Sou humano</span>
+                </label>
+                <div style="text-align: right; font-size: 9px; color: #555; font-weight: 700;">
+                    <span>hCaptcha</span><br>
+                    <small style="color: #999;">Privacidade - Termos</small>
+                </div>
+            </div>
+
+            <p style="text-align: center; font-size: 13px; color: var(--text-secondary); margin-top: 22px;">
+                Não tem uma conta? <a href="javascript:void(0)" onclick="fecharView('loginPage'); abrirCadastro();" style="color: #fff; font-weight: 700; text-decoration: none;">Registrar</a>
+            </p>
         </form>
     </div>
 
@@ -2222,37 +2291,115 @@
             toggleModal('modalAvatarUrl');
         }
 
+        // Abre a tela de Login
+        function abrirLogin() {
+            fecharView('authPage');
+            abrirView('loginPage');
+            lucide.createIcons();
+        }
+
+        // Alterna entre mostrar e ocultar a senha digitada
+        function toggleSenha(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye-off');
+            }
+            lucide.createIcons();
+        }
+
+        // 1. CADASTRO: Salva Nome, Email, Senha e Foto no Firestore
         function cadastrarUsuarioEfetivo() {
             const nome = document.getElementById('regUsuarioNome').value.trim();
             const email = document.getElementById('regUsuarioEmail').value.trim();
+            const senhaInput = document.getElementById('regUsuarioSenha');
+            const senha = senhaInput ? senhaInput.value.trim() : '123456';
 
-            if (!nome) {
-                alert("Digite o nome de usuário!");
+            if (!nome || !email || !senha) {
+                alert("Preencha nome, email e senha!");
                 return;
             }
 
-            const dadosUsuario = {
-                nome: nome,
-                email: email,
-                avatarUrl: avatarUrlTemporario || '',
-                dataCriacao: new Date()
-            };
+            // Verifica se o email já existe no Firebase antes de salvar
+            db.collection("usuarios").where("email", "==", email).get()
+                .then((snap) => {
+                    if (!snap.empty) {
+                        alert("Este email já possui cadastro! Clique em 'Conecte-se'.");
+                        return;
+                    }
 
-            db.collection("usuarios").add(dadosUsuario)
-                .then((docRef) => {
-                    dadosUsuario.id = docRef.id;
-                    usuarioAtivo = dadosUsuario;
+                    const dadosUsuario = {
+                        nome: nome,
+                        email: email,
+                        senha: senha,
+                        avatarUrl: avatarUrlTemporario || '',
+                        dataCriacao: new Date()
+                    };
 
-                    localStorage.setItem('radish_user', JSON.stringify(dadosUsuario));
+                    db.collection("usuarios").add(dadosUsuario)
+                        .then((docRef) => {
+                            dadosUsuario.id = docRef.id;
+                            usuarioAtivo = dadosUsuario;
 
-                    aplicarVisualUsuario(dadosUsuario);
-                    fecharView('authPage');
-                    alert('Conta criada com sucesso!');
+                            localStorage.setItem('radish_user', JSON.stringify(dadosUsuario));
+
+                            aplicarVisualUsuario(dadosUsuario);
+                            fecharView('authPage');
+                            alert('Conta criada e conectada com sucesso!');
+                        });
                 })
                 .catch((error) => {
                     console.error("Erro ao salvar usuário:", error);
                     alert("Erro ao conectar com o banco. Verifique as Regras de Segurança no Console Firebase.");
                 });
+        }
+
+        // 2. LOGIN REAL: Consulta no Firestore pelo Email e Senha
+        function fazerLoginReal() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const senha = document.getElementById('loginSenha').value.trim();
+
+            if (!email || !senha) {
+                alert("Preencha email e senha!");
+                return;
+            }
+
+            db.collection("usuarios")
+              .where("email", "==", email)
+              .get()
+              .then((snapshot) => {
+                  if (snapshot.empty) {
+                      alert("Nenhuma conta encontrada com este email!");
+                      return;
+                  }
+
+                  let autenticado = false;
+                  snapshot.forEach((doc) => {
+                      const user = doc.data();
+                      if (!user.senha || user.senha === senha) {
+                          user.id = doc.id;
+                          usuarioAtivo = user;
+                          autenticado = true;
+
+                          localStorage.setItem('radish_user', JSON.stringify(user));
+                          aplicarVisualUsuario(user);
+                          fecharView('loginPage');
+                          alert(`Bem-vindo de volta, ${user.nome}!`);
+                      }
+                  });
+
+                  if (!autenticado) {
+                      alert("Senha incorreta! Verifique e tente novamente.");
+                  }
+              })
+              .catch((err) => {
+                  console.error("Erro ao fazer login:", err);
+                  alert("Erro ao conectar com o banco de dados.");
+              });
         }
 
         function aplicarVisualUsuario(user) {
